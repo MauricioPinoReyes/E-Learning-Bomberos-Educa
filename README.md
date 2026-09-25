@@ -25,7 +25,7 @@ Sistema E-Learning que permite gestionar cursos, módulos y contenidos educativo
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU-USUARIO/TU-REPO.git
+git clone https://github.com/MauricioPinoReyes/E-Learning-Bomberos-Educa.git
 cd demo_e-learning_bomberos
 ```
 
@@ -118,8 +118,6 @@ demo_e-learning_bomberos/
 **Asignatura:** Ingeniería de Software - INACAP 2026
 **Sección:** V-FB50-N4-P14-C1
 
-
-
 - **Richard Machuca** - Scrum Master
 - **Mauricio Pino** - Developer (Backend)
 - **Freddy Villaseca** - Developer (Frontend)
@@ -130,5 +128,3 @@ demo_e-learning_bomberos/
 Proyecto académico - Uso educacional.
 
 ---
-
-🚒 *Desarrollado con dedicación para la capacitación de nuestros héroes.*
