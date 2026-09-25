@@ -1,42 +1,316 @@
 {% extends "base.html" %}
 
 {% block title %}
-{% if subject %}{{ subject.title }} courses{% else %}All courses{% endif %}
+{% if subject %}{{ subject.title }} - Cursos{% else %}Catálogo de Cursos{% endif %}
 {% endblock %}
 
 {% block content %}
-<h1>
-{% if subject %}{{ subject.title }} courses{% else %}All courses{% endif %}
-</h1>
-<div class="contents">
-    <h3>Subjects</h3>
-    <ul id="modules">
-        <li {% if not subject %}class="selected"{% endif %}>
-            <a href="{% url 'course_list' %}">All</a>
-        </li>
-        {% for s in subjects %}
-        <li {% if subject == s %}class="selected"{% endif %}>
-            <a href="{% url 'course_list_subject' s.slug %}">
-                {{ s.title }}
-                <br>
-                <span>{{ s.total_courses }} course{{ s.total_courses|pluralize }}</span>
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+
+<!-- ============================================
+     HERO CARD (Estilo coherente con las tarjetas)
+     ============================================ -->
+<div class="container mb-4 mt-4">
+    <div class="hero-banner rounded-3 shadow-lg p-5 position-relative overflow-hidden">
+        <!-- Patrón decorativo de fondo -->
+        <div class="hero-pattern"></div>
+        
+        <!-- Iconos decorativos flotantes -->
+        <div class="hero-icons">
+            <i class="fas fa-fire-extinguisher"></i>
+            <i class="fas fa-hard-hat"></i>
+            <i class="fas fa-truck"></i>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-warning text-dark me-3 px-3 py-2">
+                        <i class="fas fa-star me-1"></i> Plataforma Oficial
+                    </span>
+                    <span class="text-white-50 small">
+                        <i class="fas fa-map-marker-alt me-1"></i> Maipú y Cerrillos
+                    </span>
+                </div>
+                
+                <h1 class="display-5 fw-bold text-white mb-3">
+                    {% if subject %}
+                        <i class="fas fa-book-open text-warning me-3"></i>
+                        Cursos de {{ subject.title }}
+                    {% else %}
+                        <i class="fas fa-graduation-cap text-warning me-3"></i>
+                        Catálogo de Cursos
+                    {% endif %}
+                </h1>
+                
+                <p class="lead text-white-50 mb-4">
+                    Capacitación especializada para los bomberos de Maipú y Cerrillos. 
+                    Explora nuestros cursos y fórmate en las áreas que más te interesan.
+                </p>
+                
+                <!-- Mini estadísticas -->
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="hero-stat">
+                        <i class="fas fa-book text-warning"></i>
+                        <span class="text-white">{{ courses|length }} cursos</span>
+                    </div>
+                    <div class="hero-stat">
+                        <i class="fas fa-layer-group text-warning"></i>
+                        <span class="text-white">{{ subjects|length }} materias</span>
+                    </div>
+                    <div class="hero-stat">
+                        <i class="fas fa-users text-warning"></i>
+                        <span class="text-white">Capacitación continua</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="module">
-    {% for course in courses %}
-    {% with subject=course.subject %}
-    <h3>
-        <a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a>
-    </h3>
-    <p>
-        <a href="{% url 'course_list_subject' subject.slug %}">{{ subject }}</a>.
-        {{ course.total_modules }} modules.
-        Instructor: {{ course.owner.get_full_name }}
-    </p>
-    {% endwith %}
-    {% endfor %}
+
+<!-- ============================================
+     CONTENIDO PRINCIPAL
+     ============================================ -->
+<div class="container mb-5">
+    <div class="row">
+        
+        <!-- COLUMNA IZQUIERDA: FILTROS POR MATERIA -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter me-2"></i> Materias
+                    </h5>
+                </div>
+                <div class="card-body p-2">
+                    <ul class="list-group list-group-flush">
+                        <!-- Opción "Todos" -->
+                        <li class="list-group-item border-0 rounded mb-1 
+                            {% if not subject %}bg-primary text-white{% else %}bg-light{% endif %}">
+                            <a href="{% url 'course_list' %}" 
+                               class="text-decoration-none d-flex justify-content-between align-items-center
+                               {% if not subject %}text-white{% else %}text-dark{% endif %}">
+                                <span>
+                                    <i class="fas fa-th-list me-2"></i> Todos los cursos
+                                </span>
+                            </a>
+                        </li>
+                        
+                        <!-- Lista de materias -->
+                        {% for s in subjects %}
+                        <li class="list-group-item border-0 rounded mb-1 
+                            {% if subject == s %}bg-primary text-white{% else %}bg-light{% endif %}">
+                            <a href="{% url 'course_list_subject' s.slug %}" 
+                               class="text-decoration-none d-flex justify-content-between align-items-center
+                               {% if subject == s %}text-white{% else %}text-dark{% endif %}">
+                                <span>
+                                    <i class="fas fa-book me-2"></i> {{ s.title }}
+                                </span>
+                                <span class="badge bg-primary">
+                                    {{ s.total_courses }}
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COLUMNA DERECHA: GRID DE CURSOS -->
+        <div class="col-lg-9">
+            
+            <!-- Encabezado con contador -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0 text-primary fw-bold">
+                    {% if subject %}
+                        <i class="fas fa-book-open me-2"></i>
+                        {{ subject.title }}
+                    {% else %}
+                        <i class="fas fa-list me-2"></i>
+                        Todos los cursos disponibles
+                    {% endif %}
+                </h4>
+                <span class="badge bg-primary fs-6">
+                    {{ courses|length }} curso{{ courses|length|pluralize }}
+                </span>
+            </div>
+            
+            <!-- Grid de cursos -->
+            {% if courses %}
+            <div class="row">
+                {% for course in courses %}
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0 course-card">
+                        
+                        <!-- Encabezado AZUL con materia y módulos -->
+                        <div class="card-header bg-primary text-white py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="opacity-90">
+                                    <i class="fas fa-tag me-1"></i> {{ course.subject }}
+                                </small>
+                                <span class="badge bg-white text-primary">
+                                    <i class="fas fa-layer-group me-1"></i>
+                                    {{ course.total_modules }} módulo{{ course.total_modules|pluralize }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Cuerpo de la tarjeta -->
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-dark fw-bold mb-3">
+                                <i class="fas fa-fire text-warning me-2"></i>
+                                {{ course.title }}
+                            </h5>
+                            
+                            {% if course.overview %}
+                            <p class="card-text text-muted small mb-3 flex-grow-1">
+                                {{ course.overview|truncatewords:20 }}
+                            </p>
+                            {% else %}
+                            <p class="card-text text-muted small mb-3 flex-grow-1 fst-italic">
+                                Curso de capacitación especializado.
+                            </p>
+                            {% endif %}
+                            
+                            <!-- Info del instructor -->
+                            <div class="border-top pt-3 mt-auto">
+                                <div class="d-flex align-items-center text-muted small">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                         style="width: 35px; height: 35px; font-size: 14px;">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">
+                                            {{ course.owner.get_full_name|default:course.owner.username }}
+                                        </div>
+                                        <div>Instructor</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botón de acción AMARILLO DORADO -->
+                        <div class="card-footer bg-white border-0 pb-3 px-3">
+                            <a href="{% url 'course_detail' course.slug %}" 
+                               class="btn btn-warning w-100 fw-bold text-dark">
+                                <i class="fas fa-eye me-2"></i> Ver Detalles del Curso
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% else %}
+            <!-- Mensaje si no hay cursos -->
+            <div class="card border-0 bg-light text-center py-5">
+                <div class="card-body">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No hay cursos disponibles</h4>
+                    <p class="text-muted mb-0">
+                        {% if subject %}
+                            Actualmente no hay cursos en la materia <strong>{{ subject.title }}</strong>.
+                        {% else %}
+                            Aún no se han publicado cursos en la plataforma.
+                        {% endif %}
+                    </p>
+                    {% if subject %}
+                    <a href="{% url 'course_list' %}" class="btn btn-warning fw-bold text-dark mt-3">
+                        <i class="fas fa-arrow-left me-2"></i> Ver todos los cursos
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
 </div>
+
+<!-- ============================================
+     ESTILOS CSS PERSONALIZADOS
+     ============================================ -->
+<style>
+    /* Hero Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #084298 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        z-index: 1;
+    }
+    
+    .hero-icons {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+        opacity: 0.15;
+    }
+    
+    .hero-icons i {
+        display: block;
+        font-size: 4rem;
+        color: white;
+        margin: 15px 0;
+    }
+    
+    .hero-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 8px 16px;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .hero-stat i {
+        font-size: 1.1rem;
+    }
+    
+    /* Course Cards */
+    .course-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.25) !important;
+    }
+    
+    /* Filtros */
+    .list-group-item a:hover {
+        opacity: 0.85;
+    }
+    
+    /* Botones */
+    .btn-warning:hover {
+        background-color: #e0a800 !important;
+        border-color: #d39e00 !important;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .hero-icons {
+            display: none;
+        }
+        .hero-banner {
+            padding: 2rem !important;
+        }
+    }
+</style>
+
 {% endblock %}
