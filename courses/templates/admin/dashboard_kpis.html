@@ -1,0 +1,158 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 style="color: #dc3545; margin-bottom: 30px; font-weight: bold;">
+        🚒 Dashboard de KPIs - Plataforma de Capacitación
+    </h1>
+    
+     <!-- FILA 1: 4 Métricas Principales -->
+    <div class="row">
+        <!-- KPI 1: Total Alumnos Inscritos -->
+        <div class="col-md-3">
+            <div class="card" style="border-left: 5px solid #007bff;">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">📝 Total Alumnos Inscritos</h5>
+                    <h2 style="color: #007bff; font-size: 42px; font-weight: bold;">
+                        {{ total_alumnos_inscritos }}
+                    </h2>
+                    <p class="text-muted">
+                        <small>Matrículas activas en la plataforma</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 2: Alumnos que Finalizaron -->
+        <div class="col-md-3">
+            <div class="card" style="border-left: 5px solid #28a745;">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">✅ Alumnos que Finalizaron</h5>
+                    <h2 style="color: #28a745; font-size: 42px; font-weight: bold;">
+                        {{ alumnos_finalizados }}
+                    </h2>
+                    <p class="text-muted">
+                        <small>De {{ total_estudiantes }} alumnos registrados</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- KPI 3: Tiempo Promedio (CON UMBRAL CORREGIDO) -->
+        <div class="col-md-3">
+            {% if promedio_dias == 0 %}
+                <div class="card" style="border-left: 5px solid #6c757d;">
+            {% elif cumple_meta_dias %}
+                <div class="card" style="border-left: 5px solid #28a745;">
+            {% else %}
+                <div class="card" style="border-left: 5px solid #dc3545;">
+            {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title text-muted">⏱️ Demora Promedio</h5>
+                    <h2 style="color: {% if promedio_dias == 0 %}#6c757d{% elif cumple_meta_dias %}#28a745{% else %}#dc3545{% endif %}; font-size: 42px; font-weight: bold;">
+                        {{ promedio_dias }} <span style="font-size: 20px;">días</span>
+                    </h2>
+                    <p class="text-muted">
+                        <small>Meta: ≤ {{ umbral_meta_dias }} días</small><br>
+                        {% if promedio_dias == 0 %}
+                            <span class="badge bg-secondary">⏳ Sin datos aún</span>
+                        {% elif cumple_meta_dias %}
+                            <span class="badge bg-success">✅ Límite positivo</span>
+                        {% else %}
+                            <span class="badge bg-danger">⚠️ Límite negativo</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- KPI 4: Promedio de Notas (CON UMBRAL CORREGIDO) -->
+        <div class="col-md-3">
+            {% if promedio_notas == 0 %}
+                <div class="card" style="border-left: 5px solid #6c757d;">
+            {% elif cumple_meta_notas %}
+                <div class="card" style="border-left: 5px solid #28a745;">
+            {% else %}
+                <div class="card" style="border-left: 5px solid #dc3545;">
+            {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title text-muted">📊 Promedio de Notas</h5>
+                    <h2 style="color: {% if promedio_notas == 0 %}#6c757d{% elif cumple_meta_notas %}#28a745{% else %}#dc3545{% endif %}; font-size: 42px; font-weight: bold;">
+                        {{ promedio_notas }}%
+                    </h2>
+                    <p class="text-muted">
+                        <small>Meta: ≥ {{ umbral_meta_nota }}%</small><br>
+                        {% if promedio_notas == 0 %}
+                            <span class="badge bg-secondary">⏳ Sin datos aún</span>
+                        {% elif cumple_meta_notas %}
+                            <span class="badge bg-success">✅ Cumple meta</span>
+                        {% else %}
+                            <span class="badge bg-danger">⚠️ Bajo la meta</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FILA 2: Detalle y Estado -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    🏆 Top 5 Cursos Más Demandados
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Curso de Capacitación</th>
+                                <th class="text-right">Alumnos Inscritos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for curso in cursos_populares %}
+                            <tr>
+                                <td>{{ curso.title }}</td>
+                                <td class="text-right">
+                                    <span class="badge bg-danger" style="font-size: 1.1em;">{{ curso.num_students }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">Aún no hay inscripciones</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4 class="text-muted">Estado del Sistema</h4>
+                    <hr>
+                    <p><strong>Cursos Activos:</strong> {{ total_cursos }}</p>
+                    <p><strong>Tasa de Aprobación Global:</strong> {{ tasa_aprobacion }}%</p>
+                    <p class="text-success"><strong>Base de Datos:</strong> Conectada</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,62 @@
+# ============================================
+# .gitignore para Proyecto Django - Bomberos Educa
+# ============================================
+
+# Entorno virtual 
+venv/
+env/
+ENV/
+.venv
+
+# Archivos de Python compilados
+*.py[cod]
+*$py.class
+__pycache__/
+*.so
+
+# Base de datos 
+#db.sqlite3
+#db.sqlite3-journal
+
+# Archivos multimedia subidos por usuarios
+media/
+
+# Archivos estáticos generados
+staticfiles/
+collected_static/
+
+# Configuración local sensible
+.env
+.env.local
+*.env
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*~
+
+# Logs
+*.log
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Respaldos antiguos
+*.zip
+*.rar
+*.7z
+respaldos/
+
+# Archivos de Word temporales
+~$*.doc*
+~$*.xls*
+~$*.ppt*

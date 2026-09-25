@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block content %}
+<h1>
+    {{ module.title }}
+</h1>
+<div class="contents">
+    <h3>Modules</h3>
+    <ul id="modules">
+        {% for m in object.modules.all %}
+        <li data-id="{{ m.id }}" {% if m == module %}class="selected" {% endif %}>
+            <a href="{% url 'student_course_detail_module' object.id m.id %}">
+                <span>
+                    Module <span class="order">{{ m.order|add:1 }}</span>
+                </span>
+                <br>
+                {{ m.title }}
+            </a>
+        </li>
+        {% empty %}
+        <li>No modules yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="module">
+    {% for content in module.contents.all %}
+        {% with item=content.item %}
+            <h2>{{ item.title }}</h2>
+            {{ item.render }}
+        {% endwith %}
+    {% endfor %}
+</div>
+<!-- Agrega esto después del bucle de contenidos -->
+{% if module.quiz %}
+<div class="card mt-4 border-primary">
+    <div class="card-header bg-primary text-white">
+        <h4>📝 Evaluación del Módulo</h4>
+    </div>
+    <div class="card-body">
+        <h5>{{ module.quiz.title }}</h5>
+        {% if module.quiz.description %}
+        <p>{{ module.quiz.description }}</p>
+        {% endif %}
+        <p><strong>Preguntas:</strong> {{ module.quiz.get_total_questions }}</p>
+        <p><strong>Nota mínima:</strong> {{ module.quiz.passing_score }}%</p>
+        
+        <a href="{% url 'quiz_take' module.quiz.id %}" class="btn btn-success btn-lg">
+            Rendir Evaluación
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

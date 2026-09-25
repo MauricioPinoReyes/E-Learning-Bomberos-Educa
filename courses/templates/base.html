@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Educa{% endblock %}</title>
+    
+    <!-- 1. Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- 2. Font Awesome CDN (para los iconos de los quizzes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- 3. Tu CSS personalizado original -->
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header con un toque de color bombero (rojo) y clases de Bootstrap -->
+    <div id="header" class="p-3 mb-3" style="background-color: #d32f2f; color: white;">
+        <a href="/" class="logo text-white text-decoration-none fs-4 fw-bold">🚒 Bomberos Educa</a>
+        <ul class="menu float-end list-inline mb-0">
+            {% if request.user.is_authenticated %}
+            <li class="list-inline-item">
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light btn-sm">Sign out</button>
+                </form>
+            </li>
+            {% else %}
+            <li class="list-inline-item">
+                <a href="{% url 'login' %}" class="text-white text-decoration-none">Sign in</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <div id="content" class="container">
+        <!-- Bloque para mostrar mensajes de Django (éxito, error, advertencia) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Aquí se inyecta el contenido de cada página (incluidos los quizzes) -->
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    {% block include_js %}
+    {% endblock %}
+    
+    <!-- 4. Bootstrap 5 JS Bundle CDN (necesario para alertas, menús, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // DOM loaded
+            {% block domready %}
+            {% endblock %}
+        })
+    </script>
+</body>
+
+</html>
