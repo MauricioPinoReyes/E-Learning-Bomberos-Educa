@@ -275,6 +275,14 @@ class QuizAttempt(models.Model):
         return self.score
 
 
+    @property
+    def threshold_color(self):
+        """Devuelve el color del indicador según el resultado."""
+        if self.score is None:
+            return 'gray'
+        return 'green' if self.passed else 'red'
+
+
 class StudentAnswer(models.Model):
     """Respuesta individual de un estudiante a una pregunta"""
     attempt = models.ForeignKey(

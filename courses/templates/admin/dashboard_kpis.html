@@ -7,9 +7,9 @@
         🚒 Dashboard de KPIs - Plataforma de Capacitación
     </h1>
     
-     <!-- FILA 1: 4 Métricas Principales -->
+    <!-- FILA 1: 4 Métricas Principales -->
     <div class="row">
-        <!-- KPI 1: Total Alumnos Inscritos -->
+        <!-- KPI 1 -->
         <div class="col-md-3">
             <div class="card" style="border-left: 5px solid #007bff;">
                 <div class="card-body">
@@ -18,13 +18,13 @@
                         {{ total_alumnos_inscritos }}
                     </h2>
                     <p class="text-muted">
-                        <small>Matrículas activas en la plataforma</small>
+                        <small>En {{ total_cursos }} cursos disponibles</small>
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- KPI 2: Alumnos que Finalizaron -->
+        <!-- KPI 2 -->
         <div class="col-md-3">
             <div class="card" style="border-left: 5px solid #28a745;">
                 <div class="card-body">
@@ -33,13 +33,13 @@
                         {{ alumnos_finalizados }}
                     </h2>
                     <p class="text-muted">
-                        <small>De {{ total_estudiantes }} alumnos registrados</small>
+                        <small>Aprobaron al menos 1 evaluación</small>
                     </p>
                 </div>
             </div>
         </div>
         
-        <!-- KPI 3: Tiempo Promedio (CON UMBRAL CORREGIDO) -->
+        <!-- KPI 3 -->
         <div class="col-md-3">
             {% if promedio_dias == 0 %}
                 <div class="card" style="border-left: 5px solid #6c757d;">
@@ -56,18 +56,18 @@
                     <p class="text-muted">
                         <small>Meta: ≤ {{ umbral_meta_dias }} días</small><br>
                         {% if promedio_dias == 0 %}
-                            <span class="badge bg-secondary">⏳ Sin datos aún</span>
+                            <span class="badge bg-secondary"> Sin datos aún</span>
                         {% elif cumple_meta_dias %}
-                            <span class="badge bg-success">✅ Límite positivo</span>
+                            <span class="badge bg-success">✅ Cumple meta</span>
                         {% else %}
-                            <span class="badge bg-danger">⚠️ Límite negativo</span>
+                            <span class="badge bg-danger">⚠️ Sobre la meta</span>
                         {% endif %}
                     </p>
                 </div>
             </div>
         </div>
         
-        <!-- KPI 4: Promedio de Notas (CON UMBRAL CORREGIDO) -->
+        <!-- KPI 4 -->
         <div class="col-md-3">
             {% if promedio_notas == 0 %}
                 <div class="card" style="border-left: 5px solid #6c757d;">
@@ -101,27 +101,44 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-dark text-white">
-                    🏆 Top 5 Cursos Más Demandados
+                    🏆 Detalle de Rendimiento por Curso
                 </div>
                 <div class="card-body">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Curso de Capacitación</th>
-                                <th class="text-right">Alumnos Inscritos</th>
+                                <th>Curso</th>
+                                <th class="text-center">Inscritos</th>
+                                <th class="text-center">Aprobados</th>
+                                <th class="text-center">Prom. Nota</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for curso in cursos_populares %}
+                            {% for curso in cursos_detalle %}
                             <tr>
-                                <td>{{ curso.title }}</td>
-                                <td class="text-right">
-                                    <span class="badge bg-danger" style="font-size: 1.1em;">{{ curso.num_students }}</span>
+                                <td>
+                                    <strong>{{ curso.title }}</strong><br>
+                                    <small class="text-muted">{{ curso.subject.title }}</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">{{ curso.total_inscritos }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success">{{ curso.total_aprobados }}</span>
+                                </td>
+                                <td class="text-center">
+                                    {% if curso.promedio_nota %}
+                                        <span class="badge {% if curso.promedio_nota >= 70 %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                            {{ curso.promedio_nota|floatformat:1 }}%
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">-</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="2" class="text-center text-muted">Aún no hay inscripciones</td>
+                                <td colspan="4" class="text-center text-muted">Aún no hay datos de rendimiento</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -137,6 +154,7 @@
                     <hr>
                     <p><strong>Cursos Activos:</strong> {{ total_cursos }}</p>
                     <p><strong>Tasa de Aprobación Global:</strong> {{ tasa_aprobacion }}%</p>
+                    <p><strong>Total Evaluaciones:</strong> {{ total_intentos }}</p>
                     <p class="text-success"><strong>Base de Datos:</strong> Conectada</p>
                 </div>
             </div>
