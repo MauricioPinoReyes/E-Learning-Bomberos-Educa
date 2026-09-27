@@ -42,6 +42,13 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ['quiz']
     inlines = [AnswerInline]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        # Instructores solo ven preguntas de sus propios quizzes
+        return qs.filter(quiz__module__course__owner=request.user)
+
 
 class QuestionInline(admin.TabularInline):
     model = Question
@@ -51,10 +58,23 @@ class QuestionInline(admin.TabularInline):
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ['title', 'module', 'passing_score', 'is_active', 'created']
+    list_display = ['title', 'module', 'passing_score', 'is_active']
     list_filter = ['is_active', 'module__course']
-    search_fields = ['title', 'module__title']
-    inlines = [QuestionInline]
+    search_fields = ['title', 'module__title']  
+    inlines = [QuestionInline] 
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        # Instructores solo ven sus propios quizzes
+        return qs.filter(module__course__owner=request.user)
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "module":
+            # Solo mostrar módulos de cursos del instructor
+            kwargs["queryset"] = Module.objects.filter(course__owner=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 # SOLO UN REGISTRO DE QuizAttempt (con inline de StudentAnswer)

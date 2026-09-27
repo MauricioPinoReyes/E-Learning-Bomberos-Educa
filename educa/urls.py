@@ -15,8 +15,8 @@ admin.site.__class__ = DashboardAdminSite
 # ---Vista inteligente de redirección post-login ---
 @login_required
 def smart_login_redirect(request):
-    # Si es administrador o pertenece al grupo 'Instructors'
-    if request.user.is_staff or request.user.groups.filter(name='Instructors').exists():
+    # Si es administrador o pertenece al grupo 'Instructores'
+    if request.user.is_staff or request.user.groups.filter(name='Instructores').exists():
         return redirect('manage_course_list') # Va al CMS de instructores
     # Si es un estudiante (bombero) normal
     return redirect('student_course_list') # Va a "Mis cursos"

@@ -63,6 +63,9 @@ ROOT_URLCONF = 'educa.urls'
 # Redirige al usuario a la vista inteligente después de loguearse
 LOGIN_REDIRECT_URL = 'smart_login_redirect'
 
+# Opcional: a dónde ir cuando cierran sesión
+LOGOUT_REDIRECT_URL = 'course_list' 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

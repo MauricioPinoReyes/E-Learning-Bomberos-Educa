@@ -60,3 +60,11 @@ respaldos/
 ~$*.doc*
 ~$*.xls*
 ~$*.ppt*
+
+# Backups locales
+media_backup/
+db_backup_*.sqlite3
+*_backup/
+
+# Archivos de diagramas temporales
+*.dot

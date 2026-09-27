@@ -10,18 +10,20 @@ from django.utils import timezone
 
 class Subject(models.Model):
     """Asignatura o materia (ej: Matemáticas, Programación, etc.)"""
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    title = models.CharField('Título',max_length=200)
+    slug = models.SlugField('Slug',max_length=200, unique=True)
 
     class Meta:
         ordering = ['title']
+        verbose_name = 'Materia'
+        verbose_name_plural = 'Materias'
 
     def __str__(self):
         return self.title
 
 
 class Course(models.Model):
-    """Curso creado por un profesor, perteneciente a una asignatura."""
+    """Curso creado por un instructor, perteneciente a una materia."""
     owner = models.ForeignKey(
         User,
         related_name='courses_created',
@@ -45,6 +47,8 @@ class Course(models.Model):
 
     class Meta:
         ordering = ['-created']
+        verbose_name = 'Curso'
+        verbose_name_plural = 'Cursos'
 
     def __str__(self):
         return self.title
@@ -63,6 +67,8 @@ class Module(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = 'Módulo'
+        verbose_name_plural = 'Módulos'
 
     def __str__(self):
         return f'{self.order}. {self.title}'
@@ -87,6 +93,8 @@ class Content(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = 'Contenido'
+        verbose_name_plural = 'Contenidos'
 
 
 class ItemBase(models.Model):
@@ -101,6 +109,8 @@ class ItemBase(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = 'Elemento Base'
+        verbose_name_plural = 'Elementos Base'
 
     def render(self):
         return render_to_string(
@@ -114,18 +124,34 @@ class ItemBase(models.Model):
 
 class Text(ItemBase):
     content = models.TextField()
+    
+    class Meta:
+        verbose_name = 'Texto'
+        verbose_name_plural = 'Textos'
 
 
 class File(ItemBase):
     file = models.FileField(upload_to='files')
 
+    class Meta:
+        verbose_name = 'Archivo'
+        verbose_name_plural = 'Archivos'
+
 
 class Image(ItemBase):
     file = models.FileField(upload_to='images')
 
+    class Meta:
+        verbose_name = 'Imagen'
+        verbose_name_plural = 'Imágenes'
+
 
 class Video(ItemBase):
     url = models.URLField()
+
+    class Meta:
+        verbose_name = 'Video'
+        verbose_name_plural = 'Videos'
 
 
 class Quiz(models.Model):
@@ -156,6 +182,11 @@ class Quiz(models.Model):
     
     def __str__(self):
         return f'{self.title} - {self.module.title}'
+
+    @property
+    def owner(self):
+        """El owner del quiz es el owner del curso"""
+        return self.module.course.owner
     
     def get_total_questions(self):
         return self.questions.count()
