@@ -550,3 +550,6 @@ class QuizSubmitWithoutEnrollmentTest(TestCase):
         attempt.refresh_from_db()
         self.assertIsNotNone(attempt.completed_at)
         self.assertEqual(attempt.score, 100.0)
+
+
+
