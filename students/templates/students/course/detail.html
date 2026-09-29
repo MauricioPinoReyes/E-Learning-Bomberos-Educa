@@ -1,57 +1,99 @@
 {% extends "base.html" %}
 
-{% block title %}
-    {{ object.title }}
-{% endblock %}
+{% block title %}{{ module.title }} - {{ object.title }}{% endblock %}
 
 {% block content %}
-<h1>
+
+<div class="container my-4">
+
+    <!-- Encabezado -->
+    <div class="bg-primary text-white rounded-3 shadow-sm p-4 mb-4">
+        <p class="mb-1 small opacity-75">
+            <i class="fas fa-book me-1"></i> {{ object.title }}
+        </p>
+        <h1 class="fw-bold mb-0" style="background: transparent !important; color: #fff !important;">
     {{ module.title }}
 </h1>
-<div class="contents">
-    <h3>Modules</h3>
-    <ul id="modules">
-        {% for m in object.modules.all %}
-        <li data-id="{{ m.id }}" {% if m == module %}class="selected" {% endif %}>
-            <a href="{% url 'student_course_detail_module' object.id m.id %}">
-                <span>
-                    Module <span class="order">{{ m.order|add:1 }}</span>
-                </span>
-                <br>
-                {{ m.title }}
-            </a>
-        </li>
-        {% empty %}
-        <li>No modules yet.</li>
-        {% endfor %}
-    </ul>
-</div>
-<div class="module">
-    {% for content in module.contents.all %}
-        {% with item=content.item %}
-            <h2>{{ item.title }}</h2>
-            {{ item.render }}
-        {% endwith %}
-    {% endfor %}
-</div>
-<!-- Agrega esto después del bucle de contenidos -->
-{% if module.quiz %}
-<div class="card mt-4 border-primary">
-    <div class="card-header bg-primary text-white">
-        <h4>📝 Evaluación del Módulo</h4>
     </div>
-    <div class="card-body">
-        <h5>{{ module.quiz.title }}</h5>
-        {% if module.quiz.description %}
-        <p>{{ module.quiz.description }}</p>
-        {% endif %}
-        <p><strong>Preguntas:</strong> {{ module.quiz.get_total_questions }}</p>
-        <p><strong>Nota mínima:</strong> {{ module.quiz.passing_score }}%</p>
-        
-        <a href="{% url 'quiz_take' module.quiz.id %}" class="btn btn-success btn-lg">
-            Rendir Evaluación
-        </a>
+
+    <div class="row">
+
+        <!-- Columna izquierda: lista de módulos -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Módulos del curso</h5>
+                </div>
+                <ul class="list-group list-group-flush" id="modules">
+                    {% for m in object.modules.all %}
+                    <li data-id="{{ m.id }}" 
+                        class="list-group-item {% if m == module %}active{% endif %}">
+                        <a href="{% url 'student_course_detail_module' object.id m.id %}" 
+                           class="text-decoration-none d-block
+                           {% if m == module %}text-white{% else %}text-dark{% endif %}">
+                            <small class="opacity-75">Módulo {{ m.order|add:1 }}</small><br>
+                            <strong>{{ m.title }}</strong>
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No hay módulos aún.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna derecha: contenidos del módulo -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Contenidos del módulo</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% for content in module.contents.all %}
+                        {% with item=content.item %}
+                            <h4 class="fw-bold text-dark mt-4 mb-3">{{ item.title }}</h4>
+                            <div class="content-render mb-4">
+                                {{ item.render }}
+                            </div>
+                        {% endwith %}
+                    {% empty %}
+                        <p class="text-muted fst-italic mb-0">
+                            Este módulo no tiene contenidos aún.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Evaluación del módulo -->
+            {% if module.quiz %}
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Evaluación del módulo</h5>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-3">{{ module.quiz.title }}</h5>
+                    
+                    {% if module.quiz.description %}
+                    <p class="text-muted">{{ module.quiz.description }}</p>
+                    {% endif %}
+                    
+                    <p class="mb-1">
+                        <strong>Preguntas:</strong> {{ module.quiz.get_total_questions }}
+                    </p>
+                    <p class="mb-4">
+                        <strong>Nota mínima:</strong> {{ module.quiz.passing_score }}%
+                    </p>
+                    
+                    <a href="{% url 'quiz_take' module.quiz.id %}" 
+                       class="btn btn-warning w-100 fw-bold text-dark">
+                        Rendir evaluación
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
     </div>
 </div>
-{% endif %}
+
 {% endblock %}
