@@ -17,7 +17,7 @@ class SubjectAdmin(admin.ModelAdmin):
 class ModuleInline(admin.StackedInline):
     model = Module
     
-    # 🔒 FILTRAR MÓDULOS: Solo ver módulos de sus propios cursos
+    #FILTRAR MÓDULOS: Solo ver módulos de sus propios cursos
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
@@ -96,7 +96,7 @@ class QuestionAdmin(admin.ModelAdmin):
         if count == 1: return '✅ Sí'
         if count == 0: return '❌ No'
         return f'⚠️ {count} (Múltiples)'
-    has_correct_answer.short_description = 'Resp. Correcta'
+    has_correct_answer.short_description = 'Resp. Asignada'
 
 
 class QuestionInline(admin.TabularInline):

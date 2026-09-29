@@ -32,12 +32,13 @@ class Course(models.Model):
     subject = models.ForeignKey(
         Subject,
         related_name='courses',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Materia'
     )
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
-    overview = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField('Título', max_length=200)
+    slug = models.SlugField('Slug', max_length=200, unique=True)
+    overview = models.TextField('Descripción general')
+    created = models.DateTimeField('Creado el', auto_now_add=True)
 
     students = models.ManyToManyField(
     User,
@@ -59,7 +60,8 @@ class Module(models.Model):
     course = models.ForeignKey(
         Course,
         related_name='modules',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Curso'
     )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -159,13 +161,15 @@ class Quiz(models.Model):
     module = models.OneToOneField(
         Module, 
         on_delete=models.CASCADE, 
-        related_name='quiz'
+        related_name='quiz',
+        verbose_name='Módulo'
     )
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    title = models.CharField('Título', max_length=200)
+    description = models.TextField('Descripción',blank=True)
     passing_score = models.IntegerField(
         default=70,
-        help_text='Nota mínima para aprobar (0-100)'
+        help_text='Nota mínima para aprobar (0-100)',
+        verbose_name='% Aprobación'
     )
     time_limit = models.IntegerField(
         null=True, 
@@ -197,11 +201,12 @@ class Question(models.Model):
     quiz = models.ForeignKey(
         Quiz, 
         on_delete=models.CASCADE, 
-        related_name='questions'
+        related_name='questions',
+        verbose_name='Evaluación'
     )
     text = models.TextField(help_text='Texto de la pregunta')
-    order = models.IntegerField(default=0)
-    points = models.IntegerField(default=1, help_text='Puntos que vale esta pregunta')
+    order = models.IntegerField('Orden',default=0)
+    points = models.IntegerField('Puntos',default=1, help_text='Puntos que vale esta pregunta')
     
     class Meta:
         ordering = ['order']
@@ -237,17 +242,19 @@ class QuizAttempt(models.Model):
     student = models.ForeignKey(
         User, 
         on_delete=models.CASCADE,
-        related_name='quiz_attempts'
+        related_name='quiz_attempts',
+        verbose_name='Estudiante'
     )
     quiz = models.ForeignKey(
         Quiz, 
         on_delete=models.CASCADE,
-        related_name='attempts'
+        related_name='attempts',
+        verbose_name='Evaluación'
     )
-    started_at = models.DateTimeField(auto_now_add=True)
-    completed_at = models.DateTimeField(null=True, blank=True)
-    score = models.FloatField(null=True, blank=True)
-    passed = models.BooleanField(default=False)
+    started_at = models.DateTimeField('inicio',auto_now_add=True)
+    completed_at = models.DateTimeField('termino',null=True, blank=True)
+    score = models.FloatField('puntaje',null=True, blank=True)
+    passed = models.BooleanField('aprobado',default=False)
     
     class Meta:
         ordering = ['-started_at']
