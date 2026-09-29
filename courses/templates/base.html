@@ -10,35 +10,99 @@
     <!-- 1. Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- 2. Font Awesome CDN (para los iconos de los quizzes) -->
+    <!-- 2. Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- 3. Tu CSS personalizado original -->
+    <!-- 3. Tu CSS personalizado -->
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
 </head>
 
 <body>
-    <!-- Header con un toque de color bombero (rojo) y clases de Bootstrap -->
+    <!-- Header con estilo bombero -->
+        <!-- Header con estilo bombero -->
     <div id="header" class="p-3 mb-3" style="background-color: #d32f2f; color: white;">
-        <a href="/" class="logo text-white text-decoration-none fs-4 fw-bold">🚒 Bomberos Educa</a>
-        <ul class="menu float-end list-inline mb-0">
-            {% if request.user.is_authenticated %}
-            <li class="list-inline-item">
-                <form action="{% url 'logout' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-light btn-sm">Salir</button>
-                </form>
-            </li>
-            {% else %}
-            <li class="list-inline-item">
-                <a href="{% url 'login' %}" class="text-white text-decoration-none">Entrar</a>
-            </li>
-            {% endif %}
-        </ul>
+        
+        <!-- Contenedor Flex para separar Izquierda (Logo) y Derecha (Menú) -->
+        <div class="d-flex justify-content-between align-items-center">
+            
+            <!-- LADO IZQUIERDO: Logo y Saludo al Usuario -->
+            <div class="d-flex flex-column">
+                <a href="/" class="logo text-white text-decoration-none fs-4 fw-bold">
+                    🚒 Bomberos Educa
+                </a>
+                
+                {% if request.user.is_authenticated %}
+                    <span class="text-white-50 small mt-1" style="font-size: 0.9rem;">
+                        <i class="fas fa-user-circle me-1"></i>
+                        {% if request.user.get_full_name %}
+                            {{ request.user.get_full_name }}
+                        {% else %}
+                            {{ request.user.username }}
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- LADO DERECHO: Menú de Navegación -->
+            <ul class="menu list-inline mb-0 align-middle">
+                {% if request.user.is_authenticated %}
+                    
+                    {% if request.user.is_staff %}
+                        <!-- NAVEGACIÓN PARA INSTRUCTORES / ADMIN -->
+                        <li class="list-inline-item">
+                            <a href="/" class="btn btn-outline-light btn-sm me-2" title="Ver catálogo de cursos">
+                                <i class="fas fa-home"></i> Catálogo
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="{% url 'manage_course_list' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold" title="Gestionar mis cursos">
+                                <i class="fas fa-chalkboard-teacher"></i> Mis Cursos
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="/admin/" class="btn btn-outline-light btn-sm me-2" title="Gestionar evaluaciones y dashboard">
+                                <i class="fas fa-cogs"></i> Panel Admin
+                            </a>
+                        </li>
+                    
+                    {% else %}
+                        <!-- NAVEGACIÓN PARA ESTUDIANTES -->
+                        <li class="list-inline-item">
+                            <a href="{% url 'student_course_list' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold">
+                                <i class="fas fa-user-graduate"></i> Mis Cursos
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- BOTÓN SALIR -->
+                    <li class="list-inline-item">
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-sign-out-alt"></i> Salir
+                            </button>
+                        </form>
+                    </li>
+                    
+                {% else %}
+                    <!-- NAVEGACIÓN PARA PÚBLICO (No autenticados) -->
+                    <li class="list-inline-item">
+                        <a href="{% url 'student_registration' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
     
     <div id="content" class="container">
-        <!-- Bloque para mostrar mensajes de Django (éxito, error, advertencia) -->
+        <!-- Mensajes de Django (éxito, error, advertencia) -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -48,7 +112,7 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Aquí se inyecta el contenido de cada página (incluidos los quizzes) -->
+        <!-- Contenido de la página -->
         {% block content %}
         {% endblock %}
     </div>
@@ -56,16 +120,14 @@
     {% block include_js %}
     {% endblock %}
     
-    <!-- 4. Bootstrap 5 JS Bundle CDN (necesario para alertas, menús, etc.) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            // DOM loaded
             {% block domready %}
             {% endblock %}
         })
     </script>
 </body>
-
 </html>
