@@ -1,99 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}{{ module.title }} - {{ object.title }}{% endblock %}
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block body_class %}page-student{% endblock %}
 
 {% block content %}
-
-<div class="container my-4">
-
-    <!-- Encabezado -->
-    <div class="bg-primary text-white rounded-3 shadow-sm p-4 mb-4">
-        <p class="mb-1 small opacity-75">
-            <i class="fas fa-book me-1"></i> {{ object.title }}
-        </p>
-        <h1 class="fw-bold mb-0" style="background: transparent !important; color: #fff !important;">
-    {{ module.title }}
-</h1>
+<!-- Top Header & Navigation -->
+<div class="mb-4">
+    <a href="{% url 'student_course_list' %}" class="text-muted text-decoration-none small d-inline-flex align-items-center mb-2 hover-danger">
+        <i class="fa-solid fa-arrow-left me-1"></i> Mis Cursos
+    </a>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+        <span class="badge bg-danger font-heading fw-semibold px-2.5 py-1">
+            <i class="fa-solid fa-graduation-cap me-1"></i>{{ object.title }}
+        </span>
     </div>
-
-    <div class="row">
-
-        <!-- Columna izquierda: lista de módulos -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Módulos del curso</h5>
-                </div>
-                <ul class="list-group list-group-flush" id="modules">
-                    {% for m in object.modules.all %}
-                    <li data-id="{{ m.id }}" 
-                        class="list-group-item {% if m == module %}active{% endif %}">
-                        <a href="{% url 'student_course_detail_module' object.id m.id %}" 
-                           class="text-decoration-none d-block
-                           {% if m == module %}text-white{% else %}text-dark{% endif %}">
-                            <small class="opacity-75">Módulo {{ m.order|add:1 }}</small><br>
-                            <strong>{{ m.title }}</strong>
-                        </a>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item text-muted">No hay módulos aún.</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <!-- Columna derecha: contenidos del módulo -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Contenidos del módulo</h5>
-                </div>
-                <div class="card-body p-4">
-                    {% for content in module.contents.all %}
-                        {% with item=content.item %}
-                            <h4 class="fw-bold text-dark mt-4 mb-3">{{ item.title }}</h4>
-                            <div class="content-render mb-4">
-                                {{ item.render }}
-                            </div>
-                        {% endwith %}
-                    {% empty %}
-                        <p class="text-muted fst-italic mb-0">
-                            Este módulo no tiene contenidos aún.
-                        </p>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Evaluación del módulo -->
-            {% if module.quiz %}
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Evaluación del módulo</h5>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="fw-bold text-dark mb-3">{{ module.quiz.title }}</h5>
-                    
-                    {% if module.quiz.description %}
-                    <p class="text-muted">{{ module.quiz.description }}</p>
-                    {% endif %}
-                    
-                    <p class="mb-1">
-                        <strong>Preguntas:</strong> {{ module.quiz.get_total_questions }}
-                    </p>
-                    <p class="mb-4">
-                        <strong>Nota mínima:</strong> {{ module.quiz.passing_score }}%
-                    </p>
-                    
-                    <a href="{% url 'quiz_take' module.quiz.id %}" 
-                       class="btn btn-warning w-100 fw-bold text-dark">
-                        Rendir evaluación
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-    </div>
+    <h1 class="h2 font-heading fw-bold text-dark border-0 p-0 m-0">
+        {{ module.title }}
+    </h1>
 </div>
 
+<div class="row g-4">
+    <!-- Sidebar de Módulos del Aula -->
+    <div class="col-lg-4 col-md-5">
+        <div class="contents card shadow-sm border-0 p-0 overflow-hidden bg-white w-100 float-none">
+            <div class="card-header bg-dark text-white font-heading fw-bold py-3 px-3 border-0 d-flex align-items-center justify-content-between">
+                <span><i class="fa-solid fa-list-check text-danger me-2"></i>Módulos</span>
+                <span class="badge bg-secondary text-white rounded-pill">{{ object.modules.count }}</span>
+            </div>
+            <ul id="modules" class="list-group list-group-flush mb-0 float-none w-100">
+                {% for m in object.modules.all %}
+                <li data-id="{{ m.id }}" class="list-group-item py-3 px-3 border-0 border-bottom {% if m == module %}selected bg-light border-start border-danger border-4{% endif %}">
+                    <a href="{% url 'student_course_detail_module' object.id m.id %}" class="text-decoration-none d-block text-dark">
+                        <span class="badge bg-secondary text-white small font-heading mb-1 me-1">
+                            Módulo <span class="order">{{ m.order|add:1 }}</span>
+                        </span>
+                        <div class="fw-semibold font-heading text-dark mt-1">
+                            {{ m.title }}
+                        </div>
+                    </a>
+                </li>
+                {% empty %}
+                <li class="list-group-item py-3 px-3 text-muted">No hay módulos aún.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Área Principal de Contenidos -->
+    <div class="col-lg-8 col-md-7">
+        <div class="module card shadow-sm border-0 p-4 mb-4 float-none w-100">
+            {% for content in module.contents.all %}
+                {% with item=content.item %}
+                    <div class="content-item-block mb-4 pb-4 border-bottom">
+                        <h2 class="h4 font-heading fw-bold text-dark mb-3 pb-2 border-bottom border-danger border-2 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-file-circle-check text-danger"></i>
+                            {{ item.title }}
+                        </h2>
+                        <div class="content-body text-secondary lh-lg">
+                            {{ item.render }}
+                        </div>
+                    </div>
+                {% endwith %}
+            {% empty %}
+                <p class="text-muted mb-0">No hay contenidos en este módulo aún.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Evaluación del Módulo si existe -->
+        {% if module.quiz %}
+        <div class="card shadow-sm border-0 border-top border-danger border-4 overflow-hidden mb-4">
+            <div class="card-header bg-dark text-white py-3 px-4 border-0 d-flex align-items-center justify-content-between">
+                <h4 class="h5 m-0 font-heading fw-bold text-white d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-clipboard-question text-danger"></i> Evaluación del Módulo
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <h5 class="font-heading fw-bold text-dark mb-2">{{ module.quiz.title }}</h5>
+                {% if module.quiz.description %}
+                <p class="text-muted small mb-3">{{ module.quiz.description }}</p>
+                {% endif %}
+                
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <div class="p-2.5 px-3 bg-light rounded border small">
+                        <strong class="d-block text-dark">Preguntas</strong>
+                        <span class="text-danger fw-bold fs-6">{{ module.quiz.get_total_questions }}</span>
+                    </div>
+                    <div class="p-2.5 px-3 bg-light rounded border small">
+                        <strong class="d-block text-dark">Nota mínima</strong>
+                        <span class="text-danger fw-bold fs-6">{{ module.quiz.passing_score }}%</span>
+                    </div>
+                </div>
+                
+                <a href="{% url 'quiz_take' module.quiz.id %}" class="btn btn-danger btn-lg rounded-pill px-4 font-heading fw-bold shadow-sm d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square me-1"></i> Rendir Evaluación
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

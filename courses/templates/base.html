@@ -7,120 +7,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bomberos Educa{% endblock %}</title>
     
-    <!-- 1. Bootstrap 5 CSS CDN -->
+    <!-- 1. Google Fonts: Montserrat & Roboto (Estilo del compañero) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 2. Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- 2. Font Awesome CDN -->
+    <!-- 3. Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- 3. Tu CSS personalizado -->
+    <!-- 4. Custom Institutional CSS -->
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
 </head>
 
-<body>
-    <!-- Header con estilo bombero -->
-        <!-- Header con estilo bombero -->
-    <div id="header" class="p-3 mb-3" style="background-color: #d32f2f; color: rgb(255, 255, 255);">
-        
-        <!-- Contenedor Flex para separar Izquierda (Logo) y Derecha (Menú) -->
-        <div class="d-flex justify-content-between align-items-center">
-            
-            <!-- LADO IZQUIERDO: Logo y Saludo al Usuario -->
-            <div class="d-flex flex-column">
-                <a href="/" class="logo text-white text-decoration-none fs-4 fw-bold">
-                    🚒 Bomberos Educa
-                </a>
-                
-                {% if request.user.is_authenticated %}
-                    <span class="text-white-50 small mt-1" style="font-size: 0.9rem;">
-                        <i class="fas fa-user-circle me-1"></i>
-                        {% if request.user.get_full_name %}
-                            {{ request.user.get_full_name }}
-                        {% else %}
-                            {{ request.user.username }}
-                        {% endif %}
-                    </span>
-                {% endif %}
-            </div>
+<body class="d-flex flex-column min-vh-100 bg-light-app {% block body_class %}{% endblock %}">
 
-            <!-- LADO DERECHO: Menú de Navegación -->
-            <ul class="menu list-inline mb-0 align-middle">
-                {% if request.user.is_authenticated %}
+    <!-- Accent line -->
+    <div class="header-top-accent"></div>
+
+    <!-- Header institucional sticky (Estructura 100% del compañero) -->
+    <header id="header" class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-2 px-3 border-bottom">
+        <div class="container-fluid container-xl">
+            
+            <!-- LOGO -->
+            <a href="/" class="navbar-brand d-flex align-items-center gap-2 logo me-auto me-lg-4">
+                <img src="{% static 'images/logo/logo_bomberos.png' %}" alt="Bomberos de Chile" class="brand-logo-img me-1" style="height: 38px; width: auto; max-height: 40px; object-fit: contain;" onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <span class="brand-title fw-bold text-dark">BOMBEROS <span class="brand-highlight text-danger">EDUCA</span></span>
+                    <span class="brand-subtitle d-none d-sm-block small text-muted">Academia Nacional de Bomberos de Chile</span>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#headerNavbar" aria-controls="headerNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="headerNavbar">
+                <ul class="navbar-nav align-items-lg-center gap-2 menu float-none my-2 my-lg-0">
                     
-                    {% if request.user.is_staff %}
-                        <!-- NAVEGACIÓN PARA INSTRUCTORES / ADMIN -->
-                        <li class="list-inline-item">
-                            <a href="/" class="btn btn-outline-light btn-sm me-2" title="Ver catálogo de cursos">
-                                <i class="fas fa-home"></i> Catálogo
+                    <!-- CATÁLOGO (Visible para todos) -->
+                    <li class="nav-item">
+                        <a href="{% url 'course_list' %}" class="nav-link text-dark font-heading fw-semibold px-2">
+                            <i class="fa-solid fa-compass me-1 text-danger"></i> Catálogo
+                        </a>
+                    </li>
+
+                    {% if request.user.is_authenticated %}
+                        
+                        <!-- MIS CURSOS: Lógica inteligente por rol (TU FUNCIONALIDAD) -->
+                        <li class="nav-item">
+                            {% if request.user.is_staff %}
+                                <a href="{% url 'manage_course_list' %}" class="nav-link text-dark font-heading fw-semibold px-2">
+                                    <i class="fa-solid fa-chalkboard-user me-1 text-danger"></i> Mis Cursos
+                                </a>
+                            {% else %}
+                                <a href="{% url 'student_course_list' %}" class="nav-link text-dark font-heading fw-semibold px-2">
+                                    <i class="fa-solid fa-graduation-cap me-1 text-danger"></i> Mis Cursos
+                                </a>
+                            {% endif %}
+                        </li>
+
+                        <!-- ADMINISTRACIÓN: Solo para Instructores/Admin (TU FUNCIONALIDAD) -->
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <li class="nav-item">
+                            <a href="/admin/" class="nav-link text-dark font-heading fw-semibold px-2">
+                                <i class="fa-solid fa-chart-line me-1 text-danger"></i> Panel Admin
                             </a>
                         </li>
-                        <li class="list-inline-item">
-                            <a href="{% url 'manage_course_list' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold" title="Gestionar mis cursos">
-                                <i class="fas fa-chalkboard-teacher"></i> Mis Cursos
-                            </a>
+                        {% endif %}
+
+                        <!-- SALUDO AL USUARIO: Con fallback a nombre completo (TU FUNCIONALIDAD + ESTILO COMPAÑERO) -->
+                        <li class="nav-item me-lg-2">
+                            <span class="nav-link text-dark fw-medium d-flex align-items-center gap-2 py-1 px-3 bg-light rounded-pill border" title="Usuario logueado">
+                                <i class="fa-solid fa-user-shield text-danger"></i>
+                                <span class="small">
+                                    {% if request.user.get_full_name %}
+                                        {{ request.user.get_full_name }}
+                                    {% else %}
+                                        {{ request.user.username }}
+                                    {% endif %}
+                                </span>
+                            </span>
                         </li>
-                        <li class="list-inline-item">
-                            <a href="/admin/" class="btn btn-outline-light btn-sm me-2" title="Gestionar evaluaciones y dashboard">
-                                <i class="fas fa-cogs"></i> Panel Admin
-                            </a>
+
+                        <!-- SALIR (Traducido) -->
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline m-0 p-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1.5 font-heading fw-semibold">
+                                    <i class="fa-solid fa-right-from-bracket me-1"></i> Salir
+                                </button>
+                            </form>
                         </li>
-                    
+
                     {% else %}
-                        <!-- NAVEGACIÓN PARA ESTUDIANTES -->
-                        <li class="list-inline-item">
-                            <a href="{% url 'student_course_list' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold">
-                                <i class="fas fa-user-graduate"></i> Mis Cursos
+                        <!-- USUARIOS NO AUTENTICADOS (TU FUNCIONALIDAD: Agregamos Registrarse) -->
+                        
+                        <li class="nav-item">
+                            <a href="{% url 'student_registration' %}" class="btn btn-outline-danger btn-sm rounded-pill px-4 py-1.5 fw-bold font-heading me-2">
+                                <i class="fa-solid fa-user-plus me-1"></i> Registrarse
+                            </a>
+                        </li>
+
+                        <!-- ENTRAR (Traducido) -->
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="btn btn-danger btn-sm rounded-pill px-4 py-1.5 fw-bold text-white shadow-sm font-heading">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Entrar
                             </a>
                         </li>
                     {% endif %}
-                    
-                    <!-- BOTÓN SALIR -->
-                    <li class="list-inline-item">
-                        <form action="{% url 'logout' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-light btn-sm">
-                                <i class="fas fa-sign-out-alt"></i> Salir
-                            </button>
-                        </form>
-                    </li>
-                    
-                {% else %}
-                    <!-- NAVEGACIÓN PARA PÚBLICO (No autenticados) -->
-                    <li class="list-inline-item">
-                        <a href="{% url 'student_registration' %}" class="btn btn-light btn-sm me-2 text-danger fw-bold">
-                            <i class="fas fa-user-plus"></i> Registrarse
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-sign-in-alt"></i> Entrar
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
+    </header>
     
-    <div id="content" class="container">
-        <!-- Mensajes de Django (éxito, error, advertencia) -->
+    <!-- Main Content Container (Estilo del compañero) -->
+    <main id="content" class="container container-xl flex-grow-1 my-4 px-3 px-sm-4">
+        <!-- Django Messages con iconos (Estilo del compañero) -->
         {% if messages %}
+            <div class="messages-container mb-4">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 border-start border-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        {% if message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="fa-solid fa-circle-exclamation text-danger fs-5 me-2"></i>
+                        {% elif message.tags == 'success' %}
+                            <i class="fa-solid fa-circle-check text-success fs-5 me-2"></i>
+                        {% else %}
+                            <i class="fa-solid fa-circle-info text-info fs-5 me-2"></i>
+                        {% endif %}
+                        <div class="fw-medium">{{ message }}</div>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
+            </div>
         {% endif %}
 
-        <!-- Contenido de la página -->
+        <!-- Page Content -->
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
+
+    <!-- Footer Institucional (Estilo 100% del compañero) -->
+    <footer class="footer-anb mt-auto py-4 bg-dark text-white border-top border-danger border-4">
+        <div class="container container-xl">
+            <div class="row gy-3 align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
+                        <i class="fa-solid fa-shield-halved text-danger fs-4"></i>
+                        <span class="fw-bold font-heading text-uppercase tracking-wider">Bomberos Educa</span>
+                    </div>
+                    <p class="small text-muted mb-0">Plataforma de Capacitación y Educación Digital — Bomberos de Chile</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="small text-muted mb-0">&copy; {% now "Y" %} Academia Nacional de Bomberos de Chile. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
     
     {% block include_js %}
     {% endblock %}
     
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>

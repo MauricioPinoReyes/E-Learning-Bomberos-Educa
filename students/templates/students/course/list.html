@@ -1,239 +1,113 @@
 {% extends "base.html" %}
 
-{% block title %}Mis cursos - Cursos{% endblock %}
+{% block title %}Mis cursos - Bomberos Educa{% endblock %}
+
+{% block body_class %}page-student{% endblock %}
 
 {% block content %}
 
-<!-- ============================================
-     HERO CARD
-     ============================================ -->
-<div class="container mb-4 mt-4">
-    <div class="hero-banner rounded-3 shadow-lg p-5 position-relative overflow-hidden">
-        <!-- Patrón decorativo de fondo -->
-        <div class="hero-pattern"></div>
-        
-        <!-- Iconos decorativos flotantes -->
-        <div class="hero-icons">
-            <i class="fas fa-book-reader"></i>
-            <i class="fas fa-graduation-cap"></i>
-            <i class="fas fa-fire"></i>
-        </div>
-        
-        <!-- Contenido principal -->
-        <div class="row align-items-center position-relative" style="z-index: 2;">
-            <div class="col-lg-9">
-                <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
-                    <span class="badge bg-warning text-dark px-3 py-2">
-                        <i class="fas fa-star me-1"></i> Mi aprendizaje
+<!-- 1. ENCABEZADO LIMPIO (Diseño del compañero + Tu contador y texto en español) -->
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2 border-bottom border-danger border-2 gap-3">
+    <div>
+        <h1 class="h2 font-heading fw-bold mb-1 border-0 p-0">
+            <i class="fa-solid fa-user-graduate text-danger me-2"></i>Mis cursos
+        </h1>
+        <p class="text-muted small mb-0">Bienvenido a tu panel de capacitación continua en Bomberos Educa</p>
+    </div>
+    <div>
+        <span class="badge bg-danger font-heading fw-semibold px-3 py-2 rounded-pill">
+            {{ object_list|length }} curso{{ object_list|length|pluralize }} inscrito{{ object_list|length|pluralize }}
+        </span>
+    </div>
+</div>
+
+<!-- 2. GRID DE CURSOS (Estructura del compañero + Tu información enriquecida) -->
+<div class="module bg-transparent border-0 p-0 shadow-none w-100 float-none">
+    <div class="row g-4">
+        {% for course in object_list %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="course-info card h-100 shadow-sm border-0 p-0 overflow-hidden course-card">
+                
+                <!-- Encabezado de tarjeta (Estilo del compañero) -->
+                <div class="card-header bg-dark text-white py-3 px-4 border-0 d-flex align-items-center justify-content-between">
+                    <span class="badge bg-danger font-heading fw-semibold">
+                        <i class="fa-solid fa-cubes me-1"></i>{{ course.modules.count }} módulos
                     </span>
-                    <span class="text-white-50 small">
-                        <i class="fas fa-map-marker-alt me-1"></i> Maipú y Cerrillos
-                    </span>
+                    <i class="fa-solid fa-book-bookmark text-danger fs-5"></i>
                 </div>
                 
-                <h1 class="display-5 fw-bold text-white mb-3 bg-transparent">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-book-reader text-warning me-3"></i>
-                        <span>Mis cursos</span>
+                <div class="card-body p-4 d-flex flex-column">
+                    <!-- Materia (Tu funcionalidad, adaptada al espacio) -->
+                    <span class="text-muted small mb-1">
+                        <i class="fa-solid fa-tag me-1 text-danger"></i> {{ course.subject }}
+                    </span>
+
+                    <!-- Título -->
+                    <h3 class="h5 card-title font-heading fw-bold text-dark mb-2 mt-1">
+                        {{ course.title }}
+                    </h3>
+                    
+                    <!-- Descripción breve (Tu funcionalidad) -->
+                    {% if course.overview %}
+                    <p class="card-text text-muted small mb-3 flex-grow-1">
+                        {{ course.overview|truncatewords:15 }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Info del Instructor (Tu funcionalidad, versión compacta) -->
+                    <div class="d-flex align-items-center text-muted small mb-3">
+                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                             style="width: 28px; height: 28px; font-size: 12px; flex-shrink: 0;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark" style="font-size: 0.85rem; line-height: 1.2;">
+                                {{ course.owner.get_full_name|default:course.owner.username }}
+                            </div>
+                            <div style="font-size: 0.75rem;">Instructor</div>
+                        </div>
                     </div>
-                </h1>
-                
-                <p class="lead text-white-50 mb-4">
-                    Continúa tu capacitación y accede a los contenidos de los cursos en los que estás inscrito.
-                </p>
-                
-                <!-- Mini estadísticas -->
-                <div class="d-flex flex-wrap gap-4">
-                    <div class="hero-stat">
-                        <i class="fas fa-book text-warning"></i>
-                        <span class="text-white">{{ object_list|length }} curso{{ object_list|length|pluralize }} inscrito{{ object_list|length|pluralize }}</span>
-                    </div>
-                    <div class="hero-stat">
-                        <i class="fas fa-graduation-cap text-warning"></i>
-                        <span class="text-white">Capacitación continua</span>
+
+                    <!-- Botón de acción (Estilo del compañero + Tu texto) -->
+                    <div class="mt-auto pt-3 border-top">
+                        <a href="{% url 'student_course_detail' course.id %}" class="btn btn-danger btn-sm rounded-pill w-100 font-heading fw-bold py-2 shadow-sm">
+                            <i class="fa-solid fa-circle-play me-1"></i> Acceder a los contenidos
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- ============================================
-     CONTENIDO PRINCIPAL
-     ============================================ -->
-<div class="container mb-5">
-    
-    <!-- Encabezado con contador -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <h4 class="mb-0 text-primary fw-bold">
-            <i class="fas fa-list me-2"></i>
-            Cursos en los que estás inscrito
-        </h4>
-        <a href="{% url 'course_list' %}" class="btn btn-warning fw-bold text-dark">
-            <i class="fas fa-search me-2"></i> Explorar más cursos
-        </a>
-    </div>
-    
-    {% if object_list %}
-    <div class="row">
-        {% for course in object_list %}
-        <div class="col-md-6 col-xl-4 mb-4">
-            <div class="card h-100 shadow-sm border-0 course-card">
-                
-                <!-- Encabezado AZUL con materia y módulos -->
-                <div class="card-header bg-primary text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="opacity-90">
-                            <i class="fas fa-tag me-1"></i> {{ course.subject }}
-                        </small>
-                        <span class="badge bg-white text-primary">
-                            <i class="fas fa-layer-group me-1"></i>
-                            {{ course.modules.count }} módulo{{ course.modules.count|pluralize }}
-                        </span>
-                    </div>
+        
+        {% empty %}
+        <!-- 3. ESTADO VACÍO (Diseño y texto del compañero, 100% en español) -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 p-5 text-center my-3">
+                <div class="mb-3">
+                    <i class="fa-solid fa-graduation-cap text-muted fs-1 opacity-50"></i>
                 </div>
-                
-                <!-- Cuerpo de la tarjeta -->
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-dark fw-bold mb-3">
-                        <i class="fas fa-fire text-warning me-2"></i>
-                        {{ course.title }}
-                    </h5>
-                    
-                    {% if course.overview %}
-                    <p class="card-text text-muted small mb-3 flex-grow-1">
-                        {{ course.overview|truncatewords:20 }}
-                    </p>
-                    {% else %}
-                    <p class="card-text text-muted small mb-3 flex-grow-1 fst-italic">
-                        Curso de capacitación especializado.
-                    </p>
-                    {% endif %}
-                    
-                    <!-- Info del instructor -->
-                    <div class="border-top pt-3 mt-auto">
-                        <div class="d-flex align-items-center text-muted small">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                 style="width: 35px; height: 35px; font-size: 14px;">
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark">
-                                    {{ course.owner.get_full_name|default:course.owner.username }}
-                                </div>
-                                <div>Instructor</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Botón de acción AMARILLO DORADO -->
-                <div class="card-footer bg-white border-0 pb-3 px-3">
-                    <a href="{% url 'student_course_detail' course.id %}" 
-                       class="btn btn-warning w-100 fw-bold text-dark">
-                        <i class="fas fa-play-circle me-2"></i> Acceder a los contenidos
+                <h4 class="font-heading fw-bold text-dark mb-2">Aún no estás inscrito en ningún curso</h4>
+                <p class="text-muted mb-4">
+                    Explora nuestro catálogo de cursos e inscríbete para comenzar tu aprendizaje.
+                </p>
+                <div>
+                    <a href="{% url 'course_list' %}" class="btn btn-danger rounded-pill px-4 py-2 font-heading fw-bold shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i> Explorar catálogo
                     </a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
-    
-    {% else %}
-    <!-- Mensaje si no está inscrito en ningún curso -->
-    <div class="card border-0 bg-light text-center py-5">
-        <div class="card-body">
-            <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Aún no estás inscrito en ningún curso</h4>
-            <p class="text-muted mb-4">
-                Explora nuestro catálogo y comienza tu capacitación en las áreas que más te interesan.
-            </p>
-            <a href="{% url 'course_list' %}" class="btn btn-warning fw-bold text-dark">
-                <i class="fas fa-search me-2"></i> Explorar catálogo de cursos
-            </a>
-        </div>
-    </div>
-    {% endif %}
-    
 </div>
 
-<!-- ============================================
-     ESTILOS CSS PERSONALIZADOS
-     ============================================ -->
+<!-- 4. ESTILOS CSS (Efecto hover rojo para las tarjetas) -->
 <style>
-    /* Hero Banner */
-    .hero-banner {
-        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #084298 100%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .hero-pattern {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-        z-index: 1;
-    }
-    
-    .hero-icons {
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-        opacity: 0.15;
-    }
-    
-    .hero-icons i {
-        display: block;
-        font-size: 4rem;
-        color: white;
-        margin: 15px 0;
-    }
-    
-    .hero-stat {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 8px 16px;
-        border-radius: 50px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    
-    .hero-stat i {
-        font-size: 1.1rem;
-    }
-    
-    /* Course Cards */
     .course-card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    
     .course-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.25) !important;
-    }
-    
-    /* Botones */
-    .btn-warning:hover {
-        background-color: #e0a800 !important;
-        border-color: #d39e00 !important;
-    }
-    
-    /* Responsive */
-    @media (max-width: 992px) {
-        .hero-icons {
-            display: none;
-        }
-        .hero-banner {
-            padding: 2rem !important;
-        }
+        box-shadow: 0 8px 16px rgba(211, 47, 47, 0.15) !important;
     }
 </style>
 

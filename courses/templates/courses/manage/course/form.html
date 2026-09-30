@@ -1,214 +1,89 @@
 {% extends "base.html" %}
 
 {% block title %}
-{% if object %}Editar curso "{{ object.title }}" - Cursos{% else %}Crear nuevo curso - Cursos{% endif %}
+{% if object %}Editar curso "{{ object.title }}"{% else %}Crear nuevo curso{% endif %}
 {% endblock %}
 
+{% block body_class %}page-manage{% endblock %}
+
 {% block content %}
-
-<!-- ============================================
-     HERO CARD
-     ============================================ -->
-<div class="container mb-4 mt-4">
-    <div class="hero-banner rounded-3 shadow-lg p-5 position-relative overflow-hidden">
-        <!-- Patrón decorativo de fondo -->
-        <div class="hero-pattern"></div>
+<div class="row justify-content-center my-3 my-md-4">
+    <div class="col-12 col-md-10 col-lg-8">
         
-        <!-- Iconos decorativos flotantes -->
-        <div class="hero-icons">
-            {% if object %}
-                <i class="fas fa-edit"></i>
-                <i class="fas fa-book"></i>
-                <i class="fas fa-save"></i>
-            {% else %}
-                <i class="fas fa-plus-circle"></i>
-                <i class="fas fa-book-medical"></i>
-                <i class="fas fa-graduation-cap"></i>
-            {% endif %}
+        <!-- Encabezado con enlace de volver (Estructura del compañero) -->
+        <div class="mb-3">
+            <a href="{% url 'manage_course_list' %}" class="text-muted text-decoration-none small d-inline-flex align-items-center mb-2 hover-danger">
+                <i class="fa-solid fa-arrow-left me-1"></i> Volver a Mis Cursos
+            </a>
+            <h1 class="h2 font-heading fw-bold text-dark border-0 p-0 m-0">
+                {% if object %}
+                    Editar curso "{{ object.title }}"
+                {% else %}
+                    Crear nuevo curso
+                {% endif %}
+            </h1>
         </div>
-        
-        <!-- Contenido principal -->
-        <div class="row align-items-center position-relative" style="z-index: 2;">
-            <div class="col-lg-9">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-warning text-dark me-3 px-3 py-2">
-                        <i class="fas fa-star me-1"></i> Panel de Instructor
-                    </span>
-                    <span class="text-white-50 small">
-                        <i class="fas fa-map-marker-alt me-1"></i> Maipú y Cerrillos
-                    </span>
+
+        <!-- Tarjeta del formulario (Diseño del compañero + Tu renderizado inteligente) -->
+        <div class="module card shadow-sm border-0 border-top border-danger border-4 p-4 w-100 float-none">
+            <h2 class="h4 font-heading fw-bold text-dark mb-4 pb-2 border-bottom border-danger border-2 d-flex align-items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-danger"></i> Información del curso
+            </h2>
+            
+            <form method="post" class="auth-form" novalidate>
+                {% csrf_token %}
+                
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger border-0 small mb-3 py-2.5 px-3 rounded-2">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                    {{ form.non_field_errors }}
                 </div>
+                {% endif %}
                 
-                <h1 class="display-5 fw-bold text-white mb-3 bg-transparent">
-                    <div class="d-flex align-items-center">
-                        {% if object %}
-                            <i class="fas fa-edit text-warning me-3"></i>
-                            <span>Editar curso</span>
-                        {% else %}
-                            <i class="fas fa-plus-circle text-warning me-3"></i>
-                            <span>Crear nuevo curso</span>
+                <!-- TU RENDERIZADO INTELIGENTE CAMPO POR CAMPO (Mejor UX que form.as_p) -->
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark small">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="text-danger">*</span>
                         {% endif %}
+                    </label>
+                    {{ field }}
+                    
+                    {% if field.help_text %}
+                    <div class="form-text text-muted small mt-1">
+                        <i class="fas fa-info-circle me-1"></i>{{ field.help_text }}
                     </div>
-                </h1>
-                
-                <p class="lead text-white-50 mb-4">
-                    {% if object %}
-                        Modifica la información del curso <strong class="text-white">"{{ object.title }}"</strong>.
-                    {% else %}
-                        Completa la información para crear un nuevo curso y compártelo con los bomberos.
                     {% endif %}
-                </p>
-                
-                <!-- Mini estadísticas -->
-                <div class="d-flex flex-wrap gap-4">
-                    <div class="hero-stat">
-                        <i class="fas fa-book text-warning"></i>
-                        <span class="text-white">
-                            {% if object %}Editando curso{% else %}Nuevo curso{% endif %}
-                        </span>
+                    
+                    {% if field.errors %}
+                    <div class="invalid-feedback d-block small text-danger mt-1">
+                        <i class="fas fa-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
                     </div>
-                    <div class="hero-stat">
-                        <i class="fas fa-user-shield text-warning"></i>
-                        <span class="text-white">Modo instructor</span>
-                    </div>
+                    {% endif %}
                 </div>
-            </div>
+                {% endfor %}
+                
+                <!-- Botones de acción (Estilo del compañero) -->
+                <div class="mt-4 pt-3 border-top d-flex gap-3">
+                    <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold font-heading shadow-sm px-4">
+                        <i class="fas fa-save me-2"></i>
+                        {% if object %}Guardar cambios{% else %}Crear curso{% endif %}
+                    </button>
+                    <a href="{% url 'manage_course_list' %}" class="btn btn-outline-secondary btn-lg rounded-pill font-heading fw-semibold px-4">
+                        <i class="fas fa-times me-2"></i> Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- ============================================
-     FORMULARIO
-     ============================================ -->
-<div class="container mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 course-card">
-                
-                <!-- Encabezado AZUL -->
-                <div class="card-header bg-primary text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-info-circle me-2"></i> Información del curso
-                        </h5>
-                        <span class="badge bg-white text-primary">
-                            <i class="fas fa-asterisk me-1"></i> Campos requeridos
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Cuerpo con formulario -->
-                <div class="card-body p-4">
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
-                        {% endif %}
-                        
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark">
-                                {{ field.label }}
-                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                            </label>
-                            {{ field }}
-                            {% if field.help_text %}
-                            <div class="form-text text-muted small">
-                                <i class="fas fa-info-circle me-1"></i>{{ field.help_text }}
-                            </div>
-                            {% endif %}
-                            {% if field.errors %}
-                            <div class="invalid-feedback d-block">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                        
-                        <!-- Botones -->
-                        <div class="d-flex gap-2 mt-4 pt-3 border-top">
-                            <button type="submit" class="btn btn-warning fw-bold text-dark">
-                                <i class="fas fa-save me-2"></i>
-                                {% if object %}Guardar cambios{% else %}Crear curso{% endif %}
-                            </button>
-                            <a href="{% url 'manage_course_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i> Cancelar
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================
-     ESTILOS CSS PERSONALIZADOS
-     ============================================ -->
+<!-- ESTILOS CSS PARA EL FORMULARIO (Adaptados al tema rojo del compañero) -->
 <style>
-    /* Hero Banner */
-    .hero-banner {
-        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #084298 100%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .hero-pattern {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-        z-index: 1;
-    }
-    
-    .hero-icons {
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-        opacity: 0.15;
-    }
-    
-    .hero-icons i {
-        display: block;
-        font-size: 4rem;
-        color: white;
-        margin: 15px 0;
-    }
-    
-    .hero-stat {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 8px 16px;
-        border-radius: 50px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    
-    .hero-stat i {
-        font-size: 1.1rem;
-    }
-    
-    /* Course Cards */
-    .course-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.25) !important;
-    }
-    
-    /* Formularios */
+    /* Estiliza los campos del formulario para que se vean modernos */
     .form-control,
     .form-select,
     input[type="text"],
@@ -221,31 +96,29 @@
         border-radius: 0.5rem;
         padding: 0.6rem 0.9rem;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        width: 100%;
     }
     
+    /* Al hacer foco, el borde se pone rojo (tema bombero) */
     .form-control:focus,
     .form-select:focus,
     input:focus,
     textarea:focus,
     select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        border-color: #d32f2f;
+        box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.15);
+        outline: none;
     }
     
-    /* Botones */
-    .btn-warning:hover {
-        background-color: #e0a800 !important;
-        border-color: #d39e00 !important;
+    /* Efecto hover para el enlace de volver */
+    .hover-danger:hover {
+        color: #d32f2f !important;
     }
     
-    /* Responsive */
-    @media (max-width: 992px) {
-        .hero-icons {
-            display: none;
-        }
-        .hero-banner {
-            padding: 2rem !important;
-        }
+    /* Ajuste para el campo de texto largo (overview) */
+    textarea {
+        min-height: 120px;
+        resize: vertical;
     }
 </style>
 

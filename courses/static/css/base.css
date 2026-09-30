@@ -1,328 +1,1086 @@
-@import url(//fonts.googleapis.com/css?family=Roboto:500,300,400);
+/* ==========================================================================
+   1. VARIABLES DE DISEÑO INSTITUCIONAL (ANB / BOMBEROS DE CHILE)
+   ========================================================================== */
+:root {
+    --primary: #E30613;
+    --primary-dark: #B80510;
+    --primary-light: #FDE8E8;
+    --white: #FFFFFF;
+    --dark: #222222;
+    --dark-surface: #1A1A1A;
+    --text: #333333;
+    --muted: #6B7280;
+    --light: #F4F4F4;
+    --light-app: #F8F9FA;
+    --border: #E5E5E5;
+    --border-dark: #D1D5DB;
+    
+    --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 50px;
+    
+    --transition: all 0.25s ease-in-out;
+}
+
+/* ==========================================================================
+   2. RESET & GENERAL
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
 
 body {
-    margin:0;
-    font-family:'Roboto', sans-serif;
-    font-weight:400;
-    color:#333;
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 400;
+    color: var(--text);
+    background-color: var(--light-app);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 a {
-    color:#3fad37;
-    text-decoration:none;
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
 }
 
 ul {
-    float:left;
+    padding-left: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family:'Roboto', sans-serif;
-    font-weight:300;
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
 h1 {
-    background:#efefef;
-    width:100%;
-    overflow:auto;
-    padding:20px 0 20px 40px;
-    margin:0;
+    font-size: 1.85rem;
+    padding: 0;
+    margin-bottom: 1.25rem;
+    background: transparent;
+    border-bottom: 3px solid var(--primary);
+    display: inline-block;
+    padding-bottom: 0.4rem;
 }
 
-.module {
-    padding:10px 20px;
-    float:left;
-    width:600px;
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-.module h3 {
-    margin:20px 0 0;
-    padding:0;
-    width:100%;
+h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
 }
 
-.module p {
-    margin:10px 0 20px;
-    width:100%;
-    float:left;
+h4 {
+    font-size: 1.1rem;
 }
 
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.text-muted {
+    color: var(--muted) !important;
+}
+
+/* ==========================================================================
+   4. LAYOUT
+   ========================================================================== */
+.header-top-accent {
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    width: 100%;
+}
+
+#content {
+    flex: 1 0 auto;
+    min-height: 0;
+}
+
+.bg-light-app {
+    background-color: var(--light-app);
+}
+
+/* ==========================================================================
+   2.1 FONDOS DE PANTALLA POR PÁGINA (background a pantalla completa)
+   ========================================================================== */
+body {
+    position: relative;
+    isolation: isolate;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        180deg,
+        rgba(248, 249, 250, 0.70) 0%,
+        rgba(248, 249, 250, 0.55) 50%,
+        rgba(248, 249, 250, 0.70) 100%
+    );
+    pointer-events: none;
+}
+
+body.page-login::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+    opacity: 0.55;
+}
+
+body.page-course-list::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+    opacity: 0.50;
+}
+
+body.page-course-detail::before {
+    background-image: url('../images/backgrounds/carro_bomba.jpg');
+    opacity: 0.55;
+}
+
+body.page-dashboard::before {
+    background-image: url('../images/backgrounds/bomberos1.jpg');
+    opacity: 0.50;
+}
+
+body.page-student::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+    opacity: 0.50;
+}
+
+body.page-manage::before {
+    background-image: url('../images/backgrounds/carro_bomba.jpg');
+    opacity: 0.45;
+}
+
+body.page-auth::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+    opacity: 0.55;
+}
+
+/* ==========================================================================
+   2.2 BACKGROUND SECTIONS & HERO BANNERS (imagen nítida — porte correcto)
+   ========================================================================== */
+.hero-banner-bomberos,
+.auth-bg-section,
+.course-detail-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: var(--light-app);
+}
+
+.hero-banner-bomberos::before,
+.auth-bg-section::before,
+.course-detail-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    filter: blur(3px);
+    transform: scale(1.04);
+    pointer-events: none;
+}
+
+.hero-banner-bomberos::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+}
+
+.auth-bg-section::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+}
+
+.course-detail-hero::before {
+    background-image: url('../images/backgrounds/carro_bomba.jpg');
+}
+
+.hero-banner-bomberos::after,
+.auth-bg-section::after,
+.course-detail-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(227, 6, 19, 0.32) 45%,
+        rgba(30, 34, 41, 0.58) 100%
+    );
+}
+
+.hero-banner-bomberos::after,
+.course-detail-hero::after {
+    background: linear-gradient(
+        135deg,
+        rgba(30, 34, 41, 0.62) 0%,
+        rgba(227, 6, 19, 0.38) 50%,
+        rgba(30, 34, 41, 0.68) 100%
+    );
+}
+
+.hero-banner-bomberos {
+    border-left: 5px solid var(--primary);
+}
+
+.auth-bg-section {
+    border-radius: var(--radius-md);
+    padding: 2rem 1rem;
+}
+
+.course-detail-hero {
+    border-left: 5px solid var(--primary);
+}
+
+.hero-banner-bomberos > *,
+.course-detail-hero > *,
+.auth-bg-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ==========================================================================
+   5. HEADER
+   ========================================================================== */
 #header {
-   /*  background:#4dcc43; */
-    overflow:auto;
-    padding:10px 20px;
-    border-bottom:6px solid rgba(13, 110, 253, 1);
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+    z-index: 1030;
 }
 
 #header .logo {
-    text-decoration:none;
-    font-family:'Roboto', sans-serif;
-    font-weight:300;
-    text-transform:uppercase;
-    font-size:24px;
-    color:#fff;
-    float:left;
+    text-decoration: none;
 }
 
-#header a {
-    color:#fff;
+#header .brand-badge {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary);
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    box-shadow: 0 2px 6px rgba(227, 6, 19, 0.3);
+    transition: var(--transition);
+}
+
+#header .logo:hover .brand-badge {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+#header .brand-title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--dark);
+    letter-spacing: 0.5px;
+    display: block;
+    line-height: 1.1;
+}
+
+#header .brand-highlight {
+    color: var(--primary);
+}
+
+#header .brand-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.2px;
 }
 
 #header .menu {
-    list-style:none;
-    float:right;
-    margin:0;
-    padding:0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-#header button {
-    background:transparent;
-    border:0;
-    color:#fff;
-    font-size:16px;
+/* ==========================================================================
+   6. NAVIGATION
+   ========================================================================== */
+.navbar-nav .nav-link {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .contents {
-    width:20%;
-    padding:10px;
-    float:left;
-    background:#333;
-    color: #fff;
-    font-family:'Roboto', sans-serif;
+    width: 100%;
+    padding: 1.25rem;
+    background: var(--dark);
+    color: var(--white);
+    font-family: var(--font-body);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
 }
 
 .contents ul {
-    list-style:none;
-    margin:0;
-    padding:0;
-    width:100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .contents ul li {
-    margin:0 0 10px 0;
-    padding:4px 10px 10px;
-    overflow:auto;
-    cursor:move;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--dark-surface);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid transparent;
+    transition: var(--transition);
+    cursor: pointer;
 }
 
-.contents ul li.selected {
-    background:#3f3f3f;
-}
-
+.contents ul li.selected,
 .contents ul li:hover {
-    background:#3f3f3f;
+    background: #333842;
+    border-left-color: var(--primary);
 }
 
 .contents ul li.placeholder {
-  background: #333;
-  border:1px dashed #ccc;
-  padding:0;
-  margin:10px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed var(--muted);
 }
 
 .contents ul span {
-    text-transform:uppercase;
-    color:#bbb;
-    font-size:14px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .contents ul a {
-    display:block;
-    color:#fff;
-    text-decoration:none;
+    display: block;
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
 }
 
 .contents ul a:hover {
-    color:#4dcc43;
-    cursor:move;
+    color: var(--primary-light);
 }
 
-ul.content-types li {
-    list-style:none;
-    float:left;
-    margin:10px;
-    background:#efefef;
-    padding:8px 14px;
+/* ==========================================================================
+   7. BUTTONS
+   ========================================================================== */
+.btn-primary,
+input[type=submit],
+a.button {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.55rem 1.35rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    text-transform: none;
 }
 
-.hidden {
-    display:none;
+.btn-primary:hover,
+input[type=submit]:hover,
+a.button:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
 }
 
-form p {
-    overflow:auto;
+.btn-outline-danger {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: transparent;
 }
 
-.errorlist {
-    color:#ae2c2c;
-    margin:0;
-}
-
-label {
-    float:left;
-    clear:both;
-    margin:0 0 8px 0;
-}
-
-input, select, textarea {
-    border:1px solid #ccc;
-    border-bottom:3px solid #ccc;
-    padding:8px 12px;
-    font-size:16px;
-    font-family:'Roboto', sans-serif;
-    float:left;
-    clear:both;
-    width:300px;
-}
-
-textarea {
-    height:80px;
-}
-
-select {
-    width:324px;
-}
-
-input[type=submit], a.button {
-    border-radius:5px;
-    background:#4dcc43;
-    color:#fff;
-    font-size:16px;
-    text-transform:uppercase;
-    border:none;
-    padding:10px 20px;
-    margin:20px 0;
+.btn-outline-danger:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
 }
 
 a.secondary-button {
-    border:3px solid #4dcc43;
-    padding:10px 20px;
-    margin:10px 0;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    display: inline-block;
+    transition: var(--transition);
 }
 
-input[type=submit]:hover, a.button:hover {
-    background:#3fad37;
+a.secondary-button:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    text-decoration: none;
 }
 
-ul#course-modules {
-    list-style:none;
-    overflow:auto;
+/* ==========================================================================
+   8. FORMS
+   ========================================================================== */
+form p {
+    margin-bottom: 1.25rem;
 }
 
-ul#course-modules textarea {
-    width:600px;
-    height:120px;
+label {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--dark);
+    margin-bottom: 0.35rem;
 }
 
-ul#course-modules li {
-    padding:20px;
-    overflow:auto;
-    cursor:move;
-    user-select:none;
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number],
+input[type=url],
+select,
+textarea,
+.form-control,
+.form-select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    color: var(--text);
+    background-color: var(--white);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
 }
 
-ul#course-modules li:nth-child(even) {
-    background:#efefef;
+input:focus,
+select:focus,
+textarea:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
+    outline: none;
 }
 
-ul#course-modules li:hover {
-    background:#ccc;
-}
-
-#module-contents div {
-    padding:10px 20px;
-    border:1px solid #ccc;
-    background:#fff
-}
-
-#module-contents div.placeholder {
-  border:1px dashed #ccc;
-}
-
-#module-contents form {
-    margin:0;
-    padding:0;
-}
-
-#module-contents input[type=submit] {
-    color:#3fad37;
-    background:none;
-    margin:-20px 0 0;
-    padding:0;
-    float:left;
-    text-transform:none;
-}
-
-#module-contents div:hover {
-    cursor:move;
-}
-
-.course-info {
-    border:1px solid #ccc;
-    padding:0 20px;
-    margin-bottom:10px;
-    width:400px;
-    overflow:auto;
-}
-
-.course-info a {
-    margin-right:10px;
+textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
 .helptext {
-    color:#ccc;
-    padding-left:20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    display: block;
 }
 
-#chat {
-    top: 64px;
-    bottom:0;
-    position:fixed;
-    width:100%;
-    overflow-y:scroll;
-    padding-bottom:150px;
+.errorlist {
+    color: var(--primary-dark);
+    font-size: 0.85rem;
+    font-weight: 500;
+    list-style: none;
+    padding: 0;
+    margin: 0.35rem 0 0;
 }
 
-#chat .message {
-    background:#efefef;
-    padding:10px 20px;
-    border-radius:4px;
-    width:auto;
-    display:inline;
-    float:left;
-    margin:10px 10px 0;
-    min-width:440px;
-    clear:both;
+.errorlist li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
-#chat .message.me {
-    display:inline;
-    float:right;
-    background:#DCEDE0;
-    color:#56A668;
+.errorlist li::before {
+    content: "⚠️";
+    font-size: 0.75rem;
 }
 
-#chat .date {
-    color:#aaa;
-    font-style:italic;
-    font-size:12px;
+.auth-card {
+    background-color: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
 }
 
-#chat-input {
-    position:absolute;
-    bottom:0;
-    background:#efefef;
-    width:100%;
-    padding-top:20px;
+.auth-form p {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
 }
 
-#chat-input input {
-    width:96%;
-    position:left;
-    float:left;
-    display:inline;
-    margin-left:2%;
-    margin-right:2%;
-    padding-left:0;
-    padding-right:0;
+.auth-form p label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--dark);
+    margin-bottom: 0.4rem;
+}
+
+.auth-form p input[type=text],
+.auth-form p input[type=password],
+.auth-form p input[type=email] {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-dark);
+}
+
+/* ==========================================================================
+   9. CARDS
+   ========================================================================== */
+.card,
+.module,
+.course-info {
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.card:hover,
+.course-info:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-dark);
+}
+
+/* ==========================================================================
+   10. COURSES
+   ========================================================================== */
+.course-info {
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+.course-card {
+    transition: var(--transition);
+}
+
+.course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg) !important;
+    border-color: var(--primary-light) !important;
+}
+
+.course-card-visual {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+}
+
+.course-card-visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.35s ease;
+}
+
+.course-card:hover .course-card-visual-img {
+    transform: scale(1.04);
+}
+
+.course-card-visual-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(30, 34, 41, 0.05) 0%,
+        rgba(30, 34, 41, 0.35) 100%
+    );
+}
+
+@media (min-width: 768px) {
+    .course-card-visual {
+        height: 180px;
+    }
+}
+
+.hover-danger {
+    transition: var(--transition);
+}
+
+.hover-danger:hover {
+    color: var(--primary) !important;
+}
+
+.bg-danger-subtle {
+    background-color: var(--primary-light) !important;
+}
+
+.border-danger-subtle {
+    border-color: #F87171 !important;
+}
+
+.course-overview-text p {
+    font-size: 1rem;
+    color: #4B5563;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.course-info h3 {
+    margin-top: 0;
+    color: var(--dark);
+    font-family: var(--font-heading);
+}
+
+.course-info a {
+    margin-right: 0.75rem;
+}
+
+ul.content-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+ul.content-types li {
+    list-style: none;
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   11. MODULES & REORDERING CONTENTS
+   ========================================================================== */
+.module {
+    padding: 1.25rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.module h3 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--light);
+    padding-bottom: 0.5rem;
+}
+
+ul#course-modules {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+ul#course-modules li {
+    padding: 1rem 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.6rem;
+    transition: var(--transition);
+    cursor: grab;
+    user-select: none;
+}
+
+ul#course-modules li:hover {
+    background: var(--light-app);
+    border-color: var(--primary-light);
+}
+
+ul#course-modules textarea {
+    width: 100%;
+    min-height: 90px;
+}
+
+#module-contents div {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+
+#module-contents div:hover {
+    cursor: grab;
+    border-color: var(--primary);
+}
+
+#module-contents div.placeholder {
+    border: 2px dashed var(--primary);
+    background: var(--primary-light);
+}
+
+#module-contents input[type=submit] {
+    color: var(--primary);
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    text-transform: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+#module-contents input[type=submit]:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    transform: none;
+}
+
+/* ==========================================================================
+   12. QUIZ & ASSESSMENTS
+   ========================================================================== */
+.quiz-container {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.question-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.option-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.option-card:hover {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+/* Quiz Radio Buttons & Option Cards */
+.quiz-form-check-input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0;
+    border: 2px solid var(--border-dark);
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+}
+
+.quiz-option-container {
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1.5px solid var(--border) !important;
+    border-radius: var(--radius-sm);
+    background-color: var(--white);
+}
+
+.quiz-option-container:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary) !important;
+}
+
+.quiz-option-container:has(input:checked) {
+    background-color: var(--primary-light);
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.quiz-option-label {
+    cursor: pointer;
+    transition: var(--transition);
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.quiz-option-container input:checked ~ .quiz-option-label {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: #10B981 !important;
+    color: white;
+}
+
+.badge-danger {
+    background-color: var(--primary) !important;
+    color: white;
+}
+
+/* ==========================================================================
+   13. DASHBOARD & KPIS
+   ========================================================================== */
+.kpi-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    transform: scale(1.08);
+    pointer-events: none;
+}
+
+.kpi-card.kpi-1::before {
+    background-image: url('../images/backgrounds/bomberos1.jpg');
+}
+
+.kpi-card.kpi-2::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+}
+
+.kpi-card.kpi-3::before {
+    background-image: url('../images/backgrounds/carro_bomba.jpg');
+}
+
+.kpi-card.kpi-4::before {
+    background-image: url('../images/backgrounds/bomberos1.jpg');
+}
+
+/* ==========================================================================
+   Ensure background sections display hero images properly
+   ========================================================================== */
+.hero-banner-bomberos,
+.auth-bg-section,
+.course-detail-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: var(--light-app);
+}
+
+.hero-banner-bomberos::before,
+.auth-bg-section::before,
+.course-detail-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    transform: scale(1.08);
+    pointer-events: none;
+}
+
+.hero-banner-bomberos::before {
+    background-image: url('../images/backgrounds/bomberos1.jpg');
+}
+
+.auth-bg-section::before {
+    background-image: url('../images/backgrounds/bomberos2.jpg');
+}
+
+.course-detail-hero::before {
+    background-image: url('../images/backgrounds/carro_bomba.jpg');
+}
+
+.kpi-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.kpi-value {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   14. FOOTER & MESSAGES
+   ========================================================================== */
+.footer-anb {
+    background-color: var(--dark) !important;
+    flex-shrink: 0;
+}
+
+.messages-container .alert {
+    border-radius: var(--radius-sm);
+}
+
+.alert-error {
+    background-color: var(--primary-light) !important;
+    border-color: #F87171 !important;
+    color: var(--primary-dark) !important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   15. RESPONSIVE DESIGN (320px, 375px, 480px, 768px, 1024px, 1366px, 1920px)
+   ========================================================================== */
+@media (max-width: 375px) {
+    body {
+        font-size: 0.9rem;
+    }
+    
+    .btn, .button, input[type=submit] {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.85rem;
+    }
+
+    #header .brand-title {
+        font-size: 0.92rem;
+    }
+
+    #header .brand-badge {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.35rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+    
+    #header .brand-title {
+        font-size: 0.98rem;
+    }
+    
+    .course-info,
+    .module,
+    .quiz-container {
+        padding: 0.85rem;
+    }
+    
+    .btn-primary, input[type=submit], a.button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    #content {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .contents {
+        width: 100%;
+        margin-bottom: 1.25rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container-xl {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1366px) {
+    .container-xl {
+        max-width: 1200px;
+    }
+}
+
+@media (min-width: 1367px) {
+    .container-xl {
+        max-width: 1320px;
+    }
 }

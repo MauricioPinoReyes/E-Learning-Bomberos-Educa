@@ -1,224 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Crear cuenta - Cursos{% endblock %}
+{% block title %}Crear cuenta - Bomberos Educa{% endblock %}
+
+{% block body_class %}page-auth{% endblock %}
 
 {% block content %}
-
-<!-- ============================================
-     HERO CARD
-     ============================================ -->
-<div class="container mb-4 mt-4">
-    <div class="hero-banner rounded-3 shadow-lg p-5 position-relative overflow-hidden">
-        <!-- Patrón decorativo de fondo -->
-        <div class="hero-pattern"></div>
+<div class="auth-bg-section row justify-content-center my-3 my-md-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
         
-        <!-- Iconos decorativos flotantes -->
-        <div class="hero-icons">
-            <i class="fas fa-user-plus"></i>
-            <i class="fas fa-id-card"></i>
-            <i class="fas fa-graduation-cap"></i>
-        </div>
-        
-        <!-- Contenido principal -->
-        <div class="row align-items-center position-relative" style="z-index: 2;">
-            <div class="col-lg-9">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-warning text-dark me-3 px-3 py-2">
-                        <i class="fas fa-star me-1"></i> Plataforma Oficial
-                    </span>
-                    <span class="text-white-50 small">
-                        <i class="fas fa-map-marker-alt me-1"></i> Maipú y Cerrillos
-                    </span>
+        <!-- TARJETA DE REGISTRO (Estructura y estilos 100% del compañero) -->
+        <div class="module card shadow-lg border-0 border-top border-danger border-4 rounded-3 p-0 overflow-hidden auth-card w-100">
+            
+            <!-- Encabezado de la tarjeta -->
+            <div class="text-center pt-4 pb-2 px-4">
+                <div class="brand-badge bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 54px; height: 54px; font-size: 1.5rem;">
+                    <i class="fa-solid fa-user-plus"></i>
                 </div>
-                
-                <h1 class="display-5 fw-bold text-white mb-3 bg-transparent">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-user-plus text-warning me-3"></i>
-                        <span>Crear cuenta</span>
-                    </div>
+                <h1 class="h3 font-heading fw-bold text-dark border-0 p-0 m-0 text-center">
+                    Crear cuenta
                 </h1>
-                
-                <p class="lead text-white-50 mb-4">
-                    Regístrate para acceder a los cursos de capacitación para bomberos de Maipú y Cerrillos.
+                <p class="text-muted small text-center mt-2 mb-0">
+                    Ingresa tus datos para crear una cuenta en la plataforma.
                 </p>
-                
-                <!-- Mini estadísticas -->
-                <div class="d-flex flex-wrap gap-4">
-                    <div class="hero-stat">
-                        <i class="fas fa-user-shield text-warning"></i>
-                        <span class="text-white">Registro gratuito</span>
-                    </div>
-                    <div class="hero-stat">
-                        <i class="fas fa-graduation-cap text-warning"></i>
-                        <span class="text-white">Acceso a todos los cursos</span>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- ============================================
-     FORMULARIO DE REGISTRO
-     ============================================ -->
-<div class="container mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <div class="card shadow-sm border-0 course-card">
-                
-                <!-- Encabezado AZUL -->
-                <div class="card-header bg-primary text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-id-card me-2"></i> Datos de registro
-                        </h5>
-                        <span class="badge bg-white text-primary">
-                            <i class="fas fa-asterisk me-1"></i> Requeridos
-                        </span>
+            <!-- Formulario de Registro (Tu lógica de campos + Espaciado del compañero) -->
+            <div class="px-4 pb-4 pt-2">
+                <form method="post" class="auth-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Errores generales del formulario -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger border-0 small mb-3 py-2.5 px-3 rounded-2 text-start">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                        {{ form.non_field_errors }}
                     </div>
-                </div>
-                
-                <!-- Cuerpo con formulario -->
-                <div class="card-body p-4">
+                    {% endif %}
                     
-                    <p class="text-muted small mb-4">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Ingresa tus datos para crear una cuenta en la plataforma.
-                    </p>
-                    
-                    <form method="post" novalidate>
-                        {% csrf_token %}
+                    <!-- TU RENDERIZADO INTELIGENTE DE CAMPOS (Mantiene los iconos específicos) -->
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark small">
+                            {% if field.name == 'username' %}
+                                <i class="fas fa-user me-1 text-danger"></i>
+                            {% elif field.name == 'first_name' %}
+                                <i class="fas fa-signature me-1 text-danger"></i>
+                            {% elif field.name == 'last_name' %}
+                                <i class="fas fa-signature me-1 text-danger"></i>
+                            {% elif field.name == 'email' %}
+                                <i class="fas fa-envelope me-1 text-danger"></i>
+                            {% elif field.name == 'password' or field.name == 'password1' %}
+                                <i class="fas fa-key me-1 text-danger"></i>
+                            {% elif field.name == 'password2' %}
+                                <i class="fas fa-check-circle me-1 text-danger"></i>
+                            {% else %}
+                                <i class="fas fa-pen me-1 text-danger"></i>
+                            {% endif %}
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span class="text-danger">*</span>
+                            {% endif %}
+                        </label>
+                        {{ field }}
                         
-                        {% if form.non_field_errors %}
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <div>{{ form.non_field_errors }}</div>
+                        {% if field.help_text %}
+                        <div class="form-text text-muted small mt-1">
+                            <i class="fas fa-info-circle me-1"></i>{{ field.help_text|safe }}
                         </div>
                         {% endif %}
                         
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark">
-                                {% if field.name == 'username' %}
-                                    <i class="fas fa-user me-1 text-primary"></i>
-                                {% elif field.name == 'first_name' %}
-                                    <i class="fas fa-signature me-1 text-primary"></i>
-                                {% elif field.name == 'last_name' %}
-                                    <i class="fas fa-signature me-1 text-primary"></i>
-                                {% elif field.name == 'email' %}
-                                    <i class="fas fa-envelope me-1 text-primary"></i>
-                                {% elif field.name == 'password' or field.name == 'password1' %}
-                                    <i class="fas fa-key me-1 text-primary"></i>
-                                {% elif field.name == 'password2' %}
-                                    <i class="fas fa-check-circle me-1 text-primary"></i>
-                                {% else %}
-                                    <i class="fas fa-pen me-1 text-primary"></i>
-                                {% endif %}
-                                {{ field.label }}
-                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                            </label>
-                            {{ field }}
-                            {% if field.help_text %}
-                            <div class="form-text text-muted small">
-                                <i class="fas fa-info-circle me-1"></i>{{ field.help_text|safe }}
-                            </div>
-                            {% endif %}
-                            {% if field.errors %}
-                            <div class="invalid-feedback d-block">
-                                <i class="fas fa-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
-                            </div>
-                            {% endif %}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block small text-danger mt-1">
+                            <i class="fas fa-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
                         </div>
-                        {% endfor %}
-                        
-                        <!-- Botón principal -->
-                        <div class="d-grid mt-4 pt-3 border-top">
-                            <button type="submit" class="btn btn-warning fw-bold text-dark">
-                                <i class="fas fa-user-check me-2"></i> Crear mi cuenta
-                            </button>
-                        </div>
-                    </form>
-                    
-                    <!-- Enlace a login -->
-                    <div class="text-center mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-2">
-                            ¿Ya tienes una cuenta?
-                        </p>
-                        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-sign-in-alt me-1"></i> Iniciar sesión
-                        </a>
+                        {% endif %}
                     </div>
+                    {% endfor %}
                     
+                    <!-- Botón de envío (Estilo del compañero: rojo, redondeado, ancho completo) -->
+                    <div class="mt-4 mb-2">
+                        <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold font-heading shadow-sm w-100 py-2.5">
+                            <i class="fas fa-user-check me-2"></i> Crear mi cuenta
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Pie de tarjeta (Texto y URL tuyos, estilo del compañero) -->
+                <div class="text-center mt-3 pt-3 border-top">
+                    <span class="text-muted small">¿Ya tienes una cuenta registrada? </span>
+                    <a href="{% url 'login' %}" class="small font-heading fw-bold text-danger text-decoration-none hover-underline">
+                        Inicia sesión
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ============================================
-     ESTILOS CSS PERSONALIZADOS
-     ============================================ -->
+<!-- ESTILOS CSS PARA LOS INPUTS (Adaptados al tema rojo del compañero) -->
 <style>
-    /* Hero Banner */
-    .hero-banner {
-        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #084298 100%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .hero-pattern {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-        z-index: 1;
-    }
-    
-    .hero-icons {
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-        opacity: 0.15;
-    }
-    
-    .hero-icons i {
-        display: block;
-        font-size: 4rem;
-        color: white;
-        margin: 15px 0;
-    }
-    
-    .hero-stat {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 8px 16px;
-        border-radius: 50px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    
-    .hero-stat i {
-        font-size: 1.1rem;
-    }
-    
-    /* Course Cards */
-    .course-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.25) !important;
-    }
-    
-    /* Inputs del formulario */
+    /* Estiliza los campos de texto para que se vean modernos dentro de la tarjeta */
     .form-control,
     input[type="text"],
     input[type="password"],
@@ -227,30 +108,22 @@
         border-radius: 0.5rem;
         padding: 0.6rem 0.9rem;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        width: 100%;
     }
     
+    /* Al hacer clic, el borde se pone rojo (tema bombero) en lugar de azul */
     .form-control:focus,
     input[type="text"]:focus,
     input[type="password"]:focus,
     input[type="email"]:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        border-color: #d32f2f;
+        box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.15);
+        outline: none;
     }
     
-    /* Botones */
-    .btn-warning:hover {
-        background-color: #e0a800 !important;
-        border-color: #d39e00 !important;
-    }
-    
-    /* Responsive */
-    @media (max-width: 992px) {
-        .hero-icons {
-            display: none;
-        }
-        .hero-banner {
-            padding: 2rem !important;
-        }
+    /* Efecto hover para el enlace de login */
+    .hover-underline:hover {
+        text-decoration: underline !important;
     }
 </style>
 

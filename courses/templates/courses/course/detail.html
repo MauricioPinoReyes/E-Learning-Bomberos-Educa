@@ -1,64 +1,164 @@
 {% extends "base.html" %}
+{% load static %} 
+{% load embed_video_tags %}
 
-{% block title %}{{ object.title }} - Cursos{% endblock %}
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block body_class %}page-course-detail{% endblock %}
 
 {% block content %}
 {% with subject=object.subject %}
 
-<div class="container my-4">
-
-    <!-- Encabezado -->
-    <div class="bg-primary text-white rounded-3 shadow-sm p-4 mb-4">
-        <a href="{% url 'course_list_subject' subject.slug %}"
-            class="badge bg-warning text-dark text-decoration-none mb-2">
-            {{ subject.title }}
+<!-- 1. HERO SECTION (Diseño del compañero + Gradiente de respaldo) -->
+<div class="course-detail-hero mb-4 p-4 p-md-5 rounded-3 text-white shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #d32f2f 0%, #92140c 100%);">
+    <!-- Si tienes la imagen carro_bomba.jpg, descomenta la línea de abajo y quita el style de arriba -->
+    <!-- <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('{% static 'images/carro_bomba.jpg' %}') center/cover no-repeat; opacity: 0.2;"></div> -->
+    
+    <div class="position-relative z-1">
+        <a href="{% url 'course_list' %}" class="text-white-50 text-decoration-none small d-inline-flex align-items-center mb-3 hover-white">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver al catálogo de cursos
         </a>
-        <h1 class="fw-bold mb-2" style="background: transparent !important; color: #fff !important;">
+        <h1 class="h2 font-heading fw-bold text-white border-0 p-0 mb-3">
             {{ object.title }}
         </h1>
-        <p class="mb-0 opacity-75">
-            {{ object.modules.count }} módulo{{ object.modules.count|pluralize }} ·
-            Instructor: {{ object.owner.get_full_name|default:object.owner.username }}
-        </p>
+        <div class="d-flex flex-wrap align-items-center gap-3 text-white-50 small">
+            <span class="badge bg-white text-danger px-3 py-1.5 font-heading fw-semibold shadow-sm">
+                <i class="fa-solid fa-bookmark me-1"></i>
+                <a href="{% url 'course_list_subject' subject.slug %}" class="text-danger text-decoration-none">
+                    {{ subject.title }}
+                </a>
+            </span>
+            <span class="d-flex align-items-center gap-1 text-white">
+                <i class="fa-solid fa-cubes text-white-50"></i>
+                {{ object.modules.count }} módulos
+            </span>
+            <span class="d-flex align-items-center gap-1 text-white">
+                <i class="fa-solid fa-user-tie text-white-50"></i>
+                Instructor: {{ object.owner.get_full_name|default:object.owner.username }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- 2. COLUMNA IZQUIERDA: Descripción y Módulos -->
+    <div class="col-lg-8">
+        
+        <!-- Overview -->
+        <div class="card shadow-sm border-0 p-4 mb-4">
+            <h2 class="h4 font-heading fw-bold text-dark mb-3 pb-2 border-bottom border-danger border-2 d-flex align-items-center gap-2">
+                <i class="fa-solid fa-circle-info text-danger"></i> Descripción del Curso
+            </h2>
+            <div class="course-overview-text text-secondary lh-lg mb-0">
+                {{ object.overview|linebreaks }}
+            </div>
+        </div>
+
+        <!-- 3. MÓDULOS Y CONTENIDOS (Lógica de Django con diseño del compañero) -->
+        {% for module in object.modules.all %}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-bottom border-danger border-3 py-3">
+                <h3 class="h5 font-heading fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-danger"></i> 
+                    Módulo {{ forloop.counter }}: {{ module.title }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                {% if module.description %}
+                    <p class="text-muted mb-4 fst-italic">{{ module.description }}</p>
+                {% endif %}
+
+                <!-- Loop de Contenidos -->
+                {% for content in module.contents.all %}
+                <div class="mb-4 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <h4 class="h6 font-heading fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        {% if content.item_type == 'video' %}
+                            <i class="fa-solid fa-video text-danger"></i>
+                        {% elif content.item_type == 'file' %}
+                            <i class="fa-solid fa-file-pdf text-danger"></i>
+                        {% elif content.item_type == 'image' %}
+                            <i class="fa-solid fa-image text-danger"></i>
+                        {% else %}
+                            <i class="fa-solid fa-align-left text-danger"></i>
+                        {% endif %}
+                        {{ content.title }}
+                    </h4>
+
+                    <!-- Renderizado Polimórfico -->
+                    <div class="content-body">
+                        {% if content.item_type == 'video' %}
+                            <div class="ratio ratio-16x9 shadow-sm rounded overflow-hidden">
+                                {% video content.item.url '100%' %}
+                            </div>
+                        {% elif content.item_type == 'file' %}
+                            <div class="alert alert-light border d-flex align-items-center gap-3 p-3">
+                                <i class="fa-solid fa-file-arrow-down fa-2x text-danger"></i>
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1 fw-bold">{{ content.item.title }}</h5>
+                                    <p class="mb-0 small text-muted">Haz clic para descargar el material.</p>
+                                </div>
+                                <a href="{{ content.item.file.url }}" class="btn btn-danger btn-sm rounded-pill px-3" download>
+                                    <i class="fa-solid fa-download me-1"></i> Descargar
+                                </a>
+                            </div>
+                        {% elif content.item_type == 'image' %}
+                            <figure class="figure w-100">
+                                <img src="{{ content.item.file.url }}" class="figure-img img-fluid rounded shadow-sm w-100" alt="{{ content.title }}">
+                                {% if content.item.title %}
+                                    <figcaption class="figure-caption text-center mt-2">{{ content.item.title }}</figcaption>
+                                {% endif %}
+                            </figure>
+                        {% else %}
+                            <div class="text-secondary lh-lg">
+                                {{ content.item.content|linebreaks }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center py-3">Este módulo aún no tiene contenidos.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-warning text-center">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> Este curso aún no tiene módulos creados.
+        </div>
+        {% endfor %}
+
     </div>
 
-    <!-- Tarjeta de descripción -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Descripción del curso</h5>
-        </div>
-        <div class="card-body p-4">
-
-            {% if object.overview %}
-            {{ object.overview|linebreaks }}
-            {% else %}
-            <p class="text-muted fst-italic mb-0">
-                Este curso no tiene una descripción detallada aún.
+    <!-- 4. COLUMNA DERECHA: Sidebar de Inscripción (Diseño del compañero) -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 border-top border-danger border-4 p-4 sticky-lg-top" style="top: 90px;">
+            <h3 class="h5 font-heading fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-danger"></i> Inscripción al Curso
+            </h3>
+            <p class="text-muted small mb-4">
+                Inscríbete para acceder a todos los módulos, evaluaciones y contenidos de aprendizaje.
             </p>
-            {% endif %}
-
-            <hr class="my-4">
 
             {% if request.user.is_authenticated %}
-            <form action="{% url 'student_enroll_course' %}" method="post">
-                {{ enroll_form }}
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">
-                    Inscribirme ahora
-                </button>
-            </form>
+                {% if request.user in object.students.all %}
+                    <div class="alert alert-success text-center mb-0">
+                        <i class="fa-solid fa-check-circle me-1"></i> Ya estás inscrito en este curso.
+                    </div>
+                {% else %}
+                    <form action="{% url 'student_enroll_course' %}" method="post" class="d-grid gap-2">
+                        {{ enroll_form }}
+                        {% csrf_token %}
+                        <input type="submit" value="Inscribirme ahora" class="btn btn-danger btn-lg rounded-pill fw-bold font-heading shadow-sm w-100 py-2.5">
+                    </form>
+                {% endif %}
             {% else %}
-            <p class="text-muted text-center mb-3">
-                Debes iniciar sesión para inscribirte en este curso.
-            </p>
-            <a href="{% url 'student_registration' %}" class="btn btn-warning w-100 fw-bold text-dark">
-                Registrarme para inscribirme
-            </a>
+                <a href="{% url 'student_registration' %}" class="btn btn-danger btn-lg rounded-pill fw-bold font-heading text-white shadow-sm w-100 text-center py-2.5 d-block">
+                    <i class="fa-solid fa-user-plus me-1"></i> Regístrate para inscribirte
+                </a>
             {% endif %}
-
         </div>
     </div>
-
 </div>
 
 {% endwith %}
